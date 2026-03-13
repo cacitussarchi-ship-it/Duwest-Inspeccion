@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Auditoría – Formulación de Agroquímicos</title>
+<title>DUWEST – Auditoría Formulación de Agroquímicos</title>
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -212,16 +212,25 @@ body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--gra
   .app-header,.sticky-progress,.actions-row,.ev-panel,.item-controls,.sig-actions,.modal-actions,.btn-close-modal{display:none!important}
   body{background:white}
 }
+/* INLINE SELECT TAGS */
+.tag-select{border:none;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.3px;padding:2px 6px 2px 6px;cursor:pointer;font-family:'IBM Plex Sans',sans-serif;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='7' height='4' viewBox='0 0 7 4'%3E%3Cpath d='M0 0l3.5 4L7 0z' fill='%23666'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 4px center;padding-right:14px}
+.tag-select:focus{outline:2px solid var(--teal);outline-offset:1px}
+.ts-le{background-color:#e0eeff;color:#1d4ed8}
+.ts-ld{background-color:#f3e8ff;color:#7c3aed}
+.ts-bt{background-color:#d1fae5;color:#065f46}
+.ts-alta{background-color:#fee2e2;color:#991b1b}
+.ts-media{background-color:#ffedd5;color:#9a3412}
+.ts-baja{background-color:#dcfce7;color:#166534}
 </style>
 </head>
 <body>
 
 <header class="app-header">
   <div class="logo">
-    <div class="logo-mark">⚗️</div>
+    <div class="logo-mark">🌿</div>
     <div>
-      <div class="logo-text">Auditoría Agroquímicos</div>
-      <div class="logo-sub">FORMULACIÓN · CR / GT</div>
+      <div class="logo-text">DUWEST</div>
+      <div class="logo-sub">AUDITORÍA · FORMULACIÓN DE AGROQUÍMICOS</div>
     </div>
   </div>
   <div class="header-right">
@@ -445,7 +454,7 @@ const CRIT_LABELS = {alta:"🔴 Alta", media:"🟠 Media", baja:"🟢 Baja"};
 // STATE
 const state = {};
 SECTIONS.forEach(s => s.items.forEach(item => {
-  state[item.id] = { status: null, obs: '', photos: [], _open: false };
+  state[item.id] = { status: null, obs: '', photos: [], _open: false, tipo: item.tipo, crit: item.crit };
 }));
 
 // ============================================================
@@ -483,8 +492,16 @@ function renderSections() {
           <div class="item-content">
             <div class="item-label">${item.req}</div>
             <div class="item-tags">
-              <span class="tag tag-${item.tipo.toLowerCase()}">${item.tipo}</span>
-              <span class="tag tag-${item.crit}">${CRIT_LABELS[item.crit]}</span>
+              <select class="tag-select ts-${st.tipo.toLowerCase()}" onchange="setTipo(${item.id},this)" onclick="event.stopPropagation()">
+                <option value="LE" ${st.tipo==='LE'?'selected':''}>LE – Legal Expreso</option>
+                <option value="LD" ${st.tipo==='LD'?'selected':''}>LD – Legal Derivado</option>
+                <option value="BT" ${st.tipo==='BT'?'selected':''}>BT – Buena Práctica</option>
+              </select>
+              <select class="tag-select ts-${st.crit}" onchange="setCrit(${item.id},this)" onclick="event.stopPropagation()">
+                <option value="alta" ${st.crit==='alta'?'selected':''}>🔴 Alta</option>
+                <option value="media" ${st.crit==='media'?'selected':''}>🟠 Media</option>
+                <option value="baja" ${st.crit==='baja'?'selected':''}>🟢 Baja</option>
+              </select>
               <span class="tag tag-evidencia">📄 ${item.evidencia}</span>
             </div>
           </div>
@@ -540,6 +557,17 @@ function setStatus(id, st) {
 }
 
 function setObs(id, val) { state[id].obs = val; }
+
+function setTipo(id, sel) {
+  state[id].tipo = sel.value;
+  // Update select color class
+  sel.className = 'tag-select ts-' + sel.value.toLowerCase();
+}
+
+function setCrit(id, sel) {
+  state[id].crit = sel.value;
+  sel.className = 'tag-select ts-' + sel.value;
+}
 
 function addPhotos(event, id) {
   const files = Array.from(event.target.files);
@@ -650,7 +678,7 @@ function openReport() {
     const st=state[i.id].status;
     if(st==='cumple')cumple++;
     else if(st==='parcial')parcial++;
-    else if(st==='nocumple'){nocumple++;if(i.crit==='alta')altaNC++;}
+    else if(st==='nocumple'){nocumple++;if(state[i.id].crit==='alta')altaNC++;}
     else if(st==='na')na++;
   }));
   const applicable=cumple+parcial+nocumple;
@@ -710,8 +738,8 @@ function openReport() {
         <div class="rep-text">
           ${item.req}
           <div class="rep-tags">
-            <span class="tag tag-${item.tipo.toLowerCase()}">${item.tipo}</span>
-            <span class="tag tag-${item.crit}">${CRIT_LABELS[item.crit]}</span>
+            <span class="tag tag-${state[item.id].tipo.toLowerCase()}">${state[item.id].tipo}</span>
+            <span class="tag tag-${state[item.id].crit}">${CRIT_LABELS[state[item.id].crit]}</span>
           </div>
           ${st.obs?`<div class="rep-obs">📝 ${st.obs}</div>`:''}
           ${st.photos.length>0?`<div class="rep-photos">📷 ${st.photos.length} foto${st.photos.length>1?'s':''} de evidencia</div>`:''}
@@ -775,7 +803,8 @@ function exportExcel() {
       const statusLabel={cumple:'Cumple',parcial:'Parcial',nocumple:'No Cumple',na:'N/A',null:'Pendiente'};
       rows.push([
         item.id, sec.title, item.cat, item.req,
-        item.tipo, item.crit==='alta'?'🔴 Alta':item.crit==='media'?'🟠 Media':'🟢 Baja',
+        state[item.id].tipo,
+        state[item.id].crit==='alta'?'🔴 Alta':state[item.id].crit==='media'?'🟠 Media':'🟢 Baja',
         item.evidencia, statusLabel[st.status]||'Pendiente',
         st.obs||'', st.photos.length>0?st.photos.length+' foto(s)':''
       ]);
