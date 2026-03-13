@@ -3,384 +3,262 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>DUWEST – Inspección Re-Empaque</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Auditoría – Formulación de Agroquímicos</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  :root {
-    --green: #2d6a2d;
-    --green-light: #4a9e4a;
-    --green-pale: #e8f5e8;
-    --green-mid: #c8e6c8;
-    --yellow: #f5c842;
-    --red: #e05252;
-    --red-pale: #fdeaea;
-    --gray-900: #111;
-    --gray-700: #3a3a3a;
-    --gray-500: #6b6b6b;
-    --gray-300: #d0d0d0;
-    --gray-100: #f5f5f5;
-    --white: #ffffff;
-    --radius: 10px;
-    --shadow: 0 2px 12px rgba(0,0,0,0.08);
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    font-family: 'DM Sans', sans-serif;
-    background: #f0f4f0;
-    color: var(--gray-900);
-    min-height: 100vh;
-  }
+:root {
+  --teal: #0d7377;
+  --teal-light: #14a085;
+  --teal-pale: #e0f5f5;
+  --teal-mid: #b2e4e4;
+  --navy: #0a2540;
+  --bg: #f2f6f9;
+  --card: #ffffff;
+  --border: #dde3ea;
+  --gray-900: #0f1923;
+  --gray-700: #374151;
+  --gray-500: #6b7280;
+  --gray-300: #d1d5db;
+  --gray-100: #f3f4f6;
+  --red: #dc2626;
+  --red-pale: #fef2f2;
+  --orange: #ea580c;
+  --orange-pale: #fff7ed;
+  --green: #16a34a;
+  --green-pale: #f0fdf4;
+  --yellow: #ca8a04;
+  --yellow-pale: #fefce8;
+  --shadow: 0 1px 8px rgba(0,0,0,0.07);
+  --shadow-lg: 0 4px 24px rgba(0,0,0,0.1);
+  --radius: 10px;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--bg);color:var(--gray-900);min-height:100vh}
 
-  /* HEADER */
-  .app-header {
-    background: var(--green);
-    color: white;
-    padding: 18px 28px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    position: sticky;
-    top: 0;
-    z-index: 100;
-    box-shadow: 0 2px 16px rgba(0,0,0,0.18);
-  }
-  .logo-block { display: flex; align-items: center; gap: 14px; }
-  .logo-icon {
-    width: 40px; height: 40px;
-    background: white;
-    border-radius: 8px;
-    display: flex; align-items: center; justify-content: center;
-  }
-  .logo-icon svg { width: 26px; height: 26px; }
-  .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
-  .logo-sub { font-size: 11px; opacity: 0.75; font-weight: 400; letter-spacing: 0.5px; }
-  .progress-pill {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    border-radius: 50px;
-    padding: 6px 16px;
-    font-size: 13px;
-    font-weight: 600;
-    display: flex; align-items: center; gap: 8px;
-  }
-  .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+/* HEADER */
+.app-header{background:var(--navy);color:white;padding:16px 28px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;box-shadow:0 2px 12px rgba(0,0,0,0.2)}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{width:38px;height:38px;background:var(--teal);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.logo-text{font-size:16px;font-weight:700;letter-spacing:-0.3px}
+.logo-sub{font-size:11px;opacity:0.6;letter-spacing:0.3px}
+.header-right{display:flex;align-items:center;gap:10px}
+.progress-pill{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:30px;padding:6px 14px;font-size:12px;font-weight:600;display:flex;align-items:center;gap:7px}
+.progress-dot{width:7px;height:7px;border-radius:50%;background:#f5c842}
 
-  /* MAIN LAYOUT */
-  .container { max-width: 800px; margin: 0 auto; padding: 28px 16px 80px; }
+/* CONTAINER */
+.container{max-width:900px;margin:0 auto;padding:28px 16px 100px}
 
-  /* CARD */
-  .card {
-    background: white;
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    margin-bottom: 20px;
-    overflow: hidden;
-  }
+/* STICKY PROGRESS */
+.sticky-progress{background:white;border-radius:12px;box-shadow:var(--shadow);padding:18px 22px;margin-bottom:20px;position:sticky;top:70px;z-index:100;border:1px solid var(--border)}
+.sp-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.sp-pct{font-size:26px;font-weight:700;color:var(--teal);font-family:'IBM Plex Mono',monospace}
+.sp-label{font-size:12px;color:var(--gray-500);font-weight:500}
+.sp-bar-bg{background:var(--gray-100);border-radius:99px;height:8px;overflow:hidden}
+.sp-bar-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--teal-light));border-radius:99px;transition:width .4s ease}
+.sp-stats{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap}
+.sp-stat{display:flex;align-items:center;gap:5px;font-size:11px;font-weight:600}
+.sp-dot{width:9px;height:9px;border-radius:50%}
 
-  /* META FORM */
-  .meta-card { padding: 24px; }
-  .meta-card h2 { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
-  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-  .field label { display: block; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
-  .field input, .field select {
-    width: 100%; padding: 10px 14px;
-    border: 1.5px solid var(--gray-300);
-    border-radius: 8px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 14px;
-    color: var(--gray-900);
-    transition: border-color 0.2s;
-    background: var(--gray-100);
-  }
-  .field input:focus, .field select:focus { outline: none; border-color: var(--green); background: white; }
+/* META CARD */
+.meta-card{background:white;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);padding:24px;margin-bottom:20px}
+.meta-card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:16px}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.meta-grid.three{grid-template-columns:1fr 1fr 1fr}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--gray-500);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:6px}
+.field input,.field select{width:100%;padding:10px 13px;border:1.5px solid var(--gray-300);border-radius:8px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;color:var(--gray-900);background:var(--gray-100);transition:border-color .2s,background .2s}
+.field input:focus,.field select:focus{outline:none;border-color:var(--teal);background:white}
+.field select option{background:white}
 
-  /* SECTION HEADER */
-  .section-header {
-    background: var(--green);
-    color: white;
-    padding: 14px 20px;
-    display: flex; align-items: center; gap: 12px;
-  }
-  .section-num {
-    background: rgba(255,255,255,0.25);
-    width: 28px; height: 28px;
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 13px; font-weight: 700;
-    flex-shrink: 0;
-  }
-  .section-title { font-size: 15px; font-weight: 600; }
-  .section-badge {
-    margin-left: auto;
-    background: rgba(255,255,255,0.2);
-    border-radius: 20px;
-    padding: 3px 10px;
-    font-size: 12px;
-    font-weight: 600;
-    white-space: nowrap;
-  }
+/* SECTION CARD */
+.section-card{background:white;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);margin-bottom:18px;overflow:hidden}
+.section-hdr{background:var(--navy);color:white;padding:13px 20px;display:flex;align-items:center;gap:11px}
+.section-num{background:rgba(255,255,255,0.2);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0}
+.section-name{font-size:14px;font-weight:600;flex:1}
+.section-badge{margin-left:auto;background:rgba(255,255,255,0.15);border-radius:20px;padding:3px 10px;font-size:11px;font-weight:700;white-space:nowrap}
 
-  /* ITEM ROW */
-  .item-row {
-    border-bottom: 1px solid #f0f0f0;
-    padding: 0;
-    transition: background 0.15s;
-  }
-  .item-row:last-child { border-bottom: none; }
-  .item-main {
-    display: flex; align-items: center; gap: 12px;
-    padding: 14px 20px;
-    cursor: pointer;
-  }
-  .item-num { font-size: 12px; font-weight: 700; color: var(--gray-500); font-family: 'DM Mono', monospace; width: 32px; flex-shrink: 0; }
-  .item-label { flex: 1; font-size: 13.5px; color: var(--gray-700); line-height: 1.4; }
-  .status-buttons { display: flex; gap: 6px; flex-shrink: 0; }
-  .status-btn {
-    padding: 5px 11px;
-    border-radius: 6px;
-    border: 1.5px solid var(--gray-300);
-    background: white;
-    font-size: 11px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-    color: var(--gray-500);
-    white-space: nowrap;
-  }
-  .status-btn:hover { transform: translateY(-1px); }
-  .status-btn.active-cumple { background: var(--green); border-color: var(--green); color: white; }
-  .status-btn.active-nocumple { background: var(--red); border-color: var(--red); color: white; }
-  .status-btn.active-na { background: var(--gray-500); border-color: var(--gray-500); color: white; }
+/* ITEM ROW */
+.item-row{border-bottom:1px solid #f4f4f4;transition:background .15s}
+.item-row:last-child{border-bottom:none}
+.item-row.s-cumple .item-main{background:#f7fdf9}
+.item-row.s-parcial .item-main{background:#fffbf0}
+.item-row.s-nocumple .item-main{background:#fff8f8}
+.item-row.s-na .item-main{background:#fafafa}
+.item-main{display:flex;align-items:flex-start;gap:10px;padding:13px 18px;cursor:pointer}
+.item-num{font-size:11px;font-weight:700;color:var(--gray-500);font-family:'IBM Plex Mono',monospace;width:28px;flex-shrink:0;padding-top:2px}
+.item-content{flex:1;min-width:0}
+.item-label{font-size:13px;color:var(--gray-700);line-height:1.4;margin-bottom:5px}
+.item-tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{display:inline-flex;align-items:center;gap:3px;padding:2px 8px;border-radius:4px;font-size:10px;font-weight:700;letter-spacing:0.3px}
+.tag-le{background:#e0eeff;color:#1d4ed8}
+.tag-ld{background:#f3e8ff;color:#7c3aed}
+.tag-bt{background:#d1fae5;color:#065f46}
+.tag-alta{background:#fee2e2;color:#991b1b}
+.tag-media{background:#ffedd5;color:#9a3412}
+.tag-baja{background:#dcfce7;color:#166534}
+.tag-evidencia{background:#f1f5f9;color:#475569}
+.item-controls{display:flex;gap:5px;flex-shrink:0;align-items:flex-start;padding-top:1px}
+.ctrl-btn{padding:5px 9px;border-radius:6px;border:1.5px solid var(--gray-300);background:white;font-size:10px;font-weight:700;cursor:pointer;transition:all .15s;color:var(--gray-500);white-space:nowrap;font-family:'IBM Plex Sans',sans-serif}
+.ctrl-btn:hover{transform:translateY(-1px)}
+.ctrl-btn.a-cumple{background:var(--green);border-color:var(--green);color:white}
+.ctrl-btn.a-parcial{background:var(--yellow);border-color:var(--yellow);color:white}
+.ctrl-btn.a-nocumple{background:var(--red);border-color:var(--red);color:white}
+.ctrl-btn.a-na{background:var(--gray-500);border-color:var(--gray-500);color:white}
 
-  /* EVIDENCE PANEL */
-  .evidence-panel {
-    padding: 0 20px 16px 64px;
-    display: none;
-    animation: slideDown 0.2s ease;
-  }
-  .evidence-panel.visible { display: block; }
-  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
-  .evidence-inner { background: var(--gray-100); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+/* EVIDENCE PANEL */
+.ev-panel{padding:0 18px 14px 56px;display:none;animation:evIn .2s ease}
+.ev-panel.open{display:block}
+@keyframes evIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}
+.ev-inner{background:var(--gray-100);border-radius:9px;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ev-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start}
+.photo-section{display:flex;flex-direction:column;gap:8px}
+.photo-sec-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:var(--gray-500)}
+.photo-gallery{display:flex;flex-wrap:wrap;gap:8px;align-items:flex-start}
+.photo-thumb{position:relative;width:80px;height:80px;border-radius:8px;overflow:hidden;border:2px solid var(--teal-mid);flex-shrink:0}
+.photo-thumb img{width:100%;height:100%;object-fit:cover;cursor:pointer}
+.photo-thumb .del-ph{position:absolute;top:2px;right:2px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:18px;height:18px;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;line-height:1}
+.add-photo-btn{width:80px;height:80px;border:2px dashed var(--gray-300);border-radius:8px;background:white;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;gap:3px;flex-shrink:0}
+.add-photo-btn:hover{border-color:var(--teal);background:var(--teal-pale)}
+.add-photo-btn input{display:none}
+.add-photo-btn .add-icon{font-size:20px}
+.add-photo-btn .add-lbl{font-size:9px;font-weight:700;color:var(--gray-500);text-align:center}
+.photo-count{font-size:10px;font-weight:700;background:var(--teal-pale);color:var(--teal);border-radius:20px;padding:1px 7px;margin-left:5px}
+.obs-wrap{flex:1;min-width:180px}
+.obs-wrap label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.4px;color:var(--gray-500);display:block;margin-bottom:5px}
+.obs-wrap textarea{width:100%;border:1.5px solid var(--gray-300);border-radius:7px;padding:8px 11px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;resize:vertical;min-height:68px;background:white;color:var(--gray-700)}
+.obs-wrap textarea:focus{outline:none;border-color:var(--teal)}
 
-  /* TOGGLE EVIDENCE LINK */
-  .ev-toggle {
-    font-size: 12px; font-weight: 600; color: var(--green);
-    cursor: pointer; display: flex; align-items: center; gap: 5px;
-    padding: 0 20px 10px 64px; margin-top: -6px;
-    text-decoration: none; user-select: none;
-  }
-  .ev-toggle:hover { text-decoration: underline; }
+/* SIGNATURE */
+.sig-card{background:white;border-radius:14px;box-shadow:var(--shadow);border:1px solid var(--border);padding:24px;margin-bottom:20px}
+.sig-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--teal);margin-bottom:14px}
+.sig-canvas-wrap{border:2px dashed var(--gray-300);border-radius:10px;background:#fafafa;position:relative;overflow:hidden}
+.sig-canvas-wrap canvas{display:block;cursor:crosshair;touch-action:none}
+.sig-hint{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;color:var(--gray-300);pointer-events:none;text-align:center;white-space:nowrap}
+.sig-actions{display:flex;gap:10px;margin-top:10px}
+.btn-sig-clear{padding:8px 18px;background:var(--gray-100);border:1px solid var(--gray-300);border-radius:8px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:600;cursor:pointer;color:var(--gray-700)}
+.btn-sig-clear:hover{background:var(--gray-300)}
+.sig-status{font-size:12px;color:var(--gray-500);display:flex;align-items:center;gap:5px;margin-left:auto}
+.sig-status.signed{color:var(--green)}
 
-  /* PHOTO SECTION */
-  .photo-section-label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
-  .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
-  .photo-thumb-wrap {
-    position: relative; width: 90px; height: 90px; flex-shrink: 0;
-    border-radius: 10px; overflow: hidden;
-    border: 2px solid var(--green-mid);
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  }
-  .photo-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
-  .photo-thumb-wrap .del-btn {
-    position: absolute; top: 3px; right: 3px;
-    background: rgba(0,0,0,0.55); color: white;
-    border: none; border-radius: 50%; width: 20px; height: 20px;
-    font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
-    line-height: 1;
-  }
-  .photo-thumb-wrap .del-btn:hover { background: var(--red); }
-  .photo-add-btn {
-    width: 90px; height: 90px; flex-shrink: 0;
-    border: 2px dashed var(--gray-300);
-    border-radius: 10px;
-    background: white;
-    display: flex; flex-direction: column; align-items: center; justify-content: center;
-    cursor: pointer; transition: border-color 0.2s, background 0.2s;
-    gap: 4px;
-  }
-  .photo-add-btn:hover { border-color: var(--green); background: var(--green-pale); }
-  .photo-add-btn .add-icon { font-size: 24px; }
-  .photo-add-btn .add-label { font-size: 10px; font-weight: 600; color: var(--gray-500); text-align: center; line-height: 1.2; }
-  .photo-add-btn input { display: none; }
-  .photo-count-badge {
-    font-size: 11px; font-weight: 600; color: var(--green);
-    background: var(--green-pale); border-radius: 20px;
-    padding: 2px 8px; margin-left: 6px;
-  }
+/* ACTION BUTTONS */
+.actions-row{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.btn-main{flex:1;min-width:160px;padding:14px 20px;border:none;border-radius:11px;font-family:'IBM Plex Sans',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all .2s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-report{background:var(--teal);color:white;box-shadow:0 4px 14px rgba(13,115,119,.3)}
+.btn-report:hover{background:var(--teal-light);transform:translateY(-2px);box-shadow:0 8px 20px rgba(13,115,119,.35)}
+.btn-excel{background:var(--navy);color:white;box-shadow:0 4px 14px rgba(10,37,64,.25)}
+.btn-excel:hover{background:#0d3060;transform:translateY(-2px)}
 
-  .obs-field { }
-  .obs-field textarea {
-    width: 100%; border: 1.5px solid var(--gray-300); border-radius: 8px;
-    padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px;
-    resize: vertical; min-height: 70px; background: white;
-    color: var(--gray-700);
-  }
-  .obs-field textarea:focus { outline: none; border-color: var(--green); }
-  .obs-field label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px; }
+/* LIGHTBOX */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,.9);display:flex;align-items:center;justify-content:center;z-index:9999;opacity:0;pointer-events:none;transition:opacity .2s}
+.lightbox.open{opacity:1;pointer-events:all}
+.lightbox img{max-width:92vw;max-height:88vh;border-radius:10px}
+.lb-close{position:absolute;top:16px;right:20px;color:white;font-size:28px;cursor:pointer;background:none;border:none}
 
-  /* LIGHTBOX */
-  .lightbox-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.88);
-    display: flex; align-items: center; justify-content: center;
-    z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s;
-  }
-  .lightbox-overlay.visible { opacity: 1; pointer-events: all; }
-  .lightbox-overlay img { max-width: 90vw; max-height: 88vh; border-radius: 10px; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
-  .lightbox-close { position: absolute; top: 18px; right: 22px; color: white; font-size: 28px; cursor: pointer; background: none; border: none; }
+/* REPORT MODAL */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.5);display:flex;align-items:flex-start;justify-content:center;z-index:1000;padding:20px;overflow-y:auto;opacity:0;pointer-events:none;transition:opacity .3s}
+.modal-bg.open{opacity:1;pointer-events:all}
+.modal{background:white;border-radius:16px;max-width:780px;width:100%;padding:36px;transform:translateY(20px);transition:transform .3s;margin:auto}
+.modal-bg.open .modal{transform:translateY(0)}
+.modal-hdr{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:24px}
+.modal-hdr h2{font-size:20px;font-weight:700}
+.modal-hdr p{font-size:13px;color:var(--gray-500);margin-top:3px}
+.btn-close-modal{background:var(--gray-100);border:none;border-radius:8px;width:34px;height:34px;cursor:pointer;font-size:18px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.report-meta-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--gray-100);border-radius:10px;padding:14px 18px;margin-bottom:18px}
+.rmi{font-size:13px}
+.rmi strong{display:block;font-size:10px;text-transform:uppercase;letter-spacing:.4px;color:var(--gray-500);margin-bottom:2px}
+.score-block{border-radius:12px;padding:18px 22px;display:flex;align-items:center;gap:20px;margin-bottom:22px}
+.score-block.good{background:var(--teal);color:white}
+.score-block.warn{background:#ea580c;color:white}
+.score-block.bad{background:#dc2626;color:white}
+.score-pct{font-size:50px;font-weight:800;font-family:'IBM Plex Mono',monospace;line-height:1}
+.score-info{flex:1}
+.score-info .lbl{font-size:13px;opacity:.8;margin-bottom:4px}
+.score-info .det{font-size:14px;font-weight:600}
+.score-sub{font-size:12px;opacity:.75;margin-top:6px}
+.rep-section{margin-bottom:18px}
+.rep-section h3{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--teal);margin-bottom:8px;border-bottom:2px solid var(--teal-pale);padding-bottom:5px}
+.rep-item{display:flex;align-items:flex-start;gap:9px;padding:8px 0;border-bottom:1px solid #f5f5f5;font-size:12.5px}
+.rep-item:last-child{border:none}
+.rep-num{font-family:'IBM Plex Mono',monospace;color:var(--gray-500);font-size:11px;width:28px;flex-shrink:0;padding-top:1px}
+.rep-text{flex:1;color:var(--gray-700);line-height:1.4}
+.rep-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:3px}
+.rep-obs{font-size:11px;color:var(--gray-500);font-style:italic;margin-top:2px}
+.rep-photos{font-size:11px;color:var(--teal);margin-top:2px}
+.badge{display:inline-block;border-radius:4px;padding:2px 7px;font-size:10px;font-weight:700;white-space:nowrap}
+.b-cumple{background:var(--green-pale);color:var(--green)}
+.b-parcial{background:var(--yellow-pale);color:var(--yellow)}
+.b-nocumple{background:var(--red-pale);color:var(--red)}
+.b-na{background:var(--gray-100);color:var(--gray-500)}
+.b-pend{background:#fff8e1;color:#b45309}
+.rep-sig{margin-top:18px;padding-top:16px;border-top:2px dashed var(--gray-300);text-align:center}
+.rep-sig-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--gray-500);margin-top:8px}
+.modal-actions{display:flex;gap:10px;margin-top:22px}
+.btn-modal-action{flex:1;padding:12px;border:none;border-radius:9px;font-family:'IBM Plex Sans',sans-serif;font-size:13px;font-weight:700;cursor:pointer;transition:all .2s}
+.btn-pdf{background:var(--teal);color:white}
+.btn-pdf:hover{background:var(--teal-light)}
+.btn-close-sec{background:var(--gray-100);color:var(--gray-700)}
+.btn-close-sec:hover{background:var(--gray-300)}
 
-  /* STATUS INDICATOR */
-  .item-row.s-cumple .item-main { background: #f0faf0; }
-  .item-row.s-nocumple .item-main { background: #fff6f6; }
-  .item-row.s-na .item-main { background: #f7f7f7; }
-
-  /* PROGRESS BAR */
-  .progress-section {
-    background: white;
-    border-radius: 14px;
-    box-shadow: var(--shadow);
-    padding: 24px;
-    margin-bottom: 20px;
-    position: sticky;
-    top: 72px;
-    z-index: 50;
-  }
-  .progress-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-  .progress-label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
-  .progress-pct { font-size: 28px; font-weight: 700; color: var(--green); font-family: 'DM Mono', monospace; }
-  .progress-bar-bg { background: var(--gray-100); border-radius: 99px; height: 10px; overflow: hidden; }
-  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-light)); border-radius: 99px; transition: width 0.4s ease; }
-  .progress-stats { display: flex; gap: 16px; margin-top: 12px; }
-  .stat-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
-  .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
-  .dot-green { background: var(--green); }
-  .dot-red { background: var(--red); }
-  .dot-gray { background: var(--gray-300); }
-
-  /* CTA BUTTON */
-  .cta-area { padding: 8px 0; text-align: center; }
-  .btn-report {
-    background: var(--green);
-    color: white;
-    border: none;
-    border-radius: 12px;
-    padding: 16px 40px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 15px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: all 0.2s;
-    letter-spacing: -0.3px;
-    box-shadow: 0 4px 16px rgba(45,106,45,0.35);
-  }
-  .btn-report:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,106,45,0.35); }
-  .btn-report:disabled { background: var(--gray-300); box-shadow: none; transform: none; cursor: not-allowed; }
-
-  /* MODAL */
-  .modal-overlay {
-    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
-    display: flex; align-items: flex-start; justify-content: center;
-    z-index: 999; padding: 20px;
-    overflow-y: auto;
-    opacity: 0; pointer-events: none; transition: opacity 0.3s;
-  }
-  .modal-overlay.visible { opacity: 1; pointer-events: all; }
-  .modal {
-    background: white; border-radius: 16px;
-    max-width: 720px; width: 100%;
-    padding: 36px;
-    transform: translateY(20px); transition: transform 0.3s;
-    margin: auto;
-  }
-  .modal-overlay.visible .modal { transform: translateY(0); }
-  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
-  .modal-header h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); }
-  .modal-header p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
-  .btn-close { background: var(--gray-100); border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-  .report-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--gray-100); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; }
-  .report-meta-item { font-size: 13px; }
-  .report-meta-item strong { display: block; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
-  .score-banner { background: var(--green); color: white; border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
-  .score-big { font-size: 52px; font-weight: 800; font-family: 'DM Mono', monospace; line-height: 1; }
-  .score-right { flex: 1; }
-  .score-label { font-size: 13px; opacity: 0.8; margin-bottom: 4px; }
-  .score-detail { font-size: 14px; font-weight: 600; }
-  .score-banner.warn { background: var(--yellow); color: var(--gray-900); }
-  .score-banner.danger { background: var(--red); }
-  .report-section { margin-bottom: 20px; }
-  .report-section h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--green); margin-bottom: 10px; border-bottom: 2px solid var(--green-pale); padding-bottom: 6px; }
-  .report-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
-  .report-item:last-child { border-bottom: none; }
-  .ritem-num { font-family: 'DM Mono', monospace; color: var(--gray-500); font-size: 12px; width: 36px; flex-shrink: 0; padding-top: 1px; }
-  .ritem-text { flex: 1; color: var(--gray-700); line-height: 1.4; }
-  .ritem-obs { font-size: 11px; color: var(--gray-500); margin-top: 2px; font-style: italic; }
-  .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
-  .badge-cumple { background: var(--green-pale); color: var(--green); }
-  .badge-nocumple { background: var(--red-pale); color: var(--red); }
-  .badge-na { background: var(--gray-100); color: var(--gray-500); }
-  .badge-pend { background: #fff8e1; color: #b8860b; }
-  .report-actions { display: flex; gap: 12px; margin-top: 24px; }
-  .btn-print { flex: 1; background: var(--gray-100); border: none; border-radius: 10px; padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; color: var(--gray-700); }
-  .btn-print:hover { background: var(--gray-300); }
-
-  /* RESPONSIVE */
-  @media (max-width: 600px) {
-    .meta-grid { grid-template-columns: 1fr; }
-    .status-buttons { flex-wrap: wrap; }
-    .status-btn { font-size: 10px; padding: 4px 8px; }
-    .item-main { flex-wrap: wrap; gap: 8px; }
-    .evidence-panel { padding-left: 20px; }
-    .report-meta { grid-template-columns: 1fr; }
-    .score-big { font-size: 40px; }
-  }
-
-  @media print {
-    .app-header, .progress-section, .cta-area, .photo-upload, .obs-field textarea { display: none !important; }
-    body { background: white; }
-  }
+@media(max-width:600px){
+  .meta-grid,.meta-grid.three{grid-template-columns:1fr}
+  .item-controls{flex-wrap:wrap}
+  .ctrl-btn{font-size:9px;padding:4px 7px}
+  .ev-panel{padding-left:18px}
+  .report-meta-grid{grid-template-columns:1fr}
+  .score-pct{font-size:36px}
+  .actions-row{flex-direction:column}
+}
+@media print{
+  .app-header,.sticky-progress,.actions-row,.ev-panel,.item-controls,.sig-actions,.modal-actions,.btn-close-modal{display:none!important}
+  body{background:white}
+}
 </style>
 </head>
 <body>
 
 <header class="app-header">
-  <div class="logo-block">
-    <div class="logo-icon">
-      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M20 4 L36 14 L36 26 L20 36 L4 26 L4 14 Z" fill="#2d6a2d"/>
-        <path d="M14 20 L18 24 L26 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-      </svg>
-    </div>
+  <div class="logo">
+    <div class="logo-mark">⚗️</div>
     <div>
-      <div class="logo-text">DUWEST</div>
-      <div class="logo-sub">INSPECCIÓN · RE-EMPAQUE</div>
+      <div class="logo-text">Auditoría Agroquímicos</div>
+      <div class="logo-sub">FORMULACIÓN · CR / GT</div>
     </div>
   </div>
-  <div class="progress-pill">
-    <div class="progress-dot"></div>
-    <span id="header-pct">0% completado</span>
+  <div class="header-right">
+    <div class="progress-pill">
+      <div class="progress-dot"></div>
+      <span id="hdr-pct">0% completado</span>
+    </div>
   </div>
 </header>
 
 <div class="container">
 
-  <!-- META CARD -->
-  <div class="card meta-card">
-    <h2>📋 Datos de la Inspección</h2>
-    <div class="meta-grid">
+  <!-- META -->
+  <div class="meta-card">
+    <div class="meta-card-title">📋 Encabezado de la Auditoría</div>
+    <div class="meta-grid" style="margin-bottom:14px">
       <div class="field">
         <label>Inspector Responsable</label>
-        <input type="text" id="meta-inspector" placeholder="Nombre completo" />
+        <input type="text" id="m-inspector" placeholder="Nombre completo">
       </div>
       <div class="field">
         <label>Fecha de Ejecución</label>
-        <input type="date" id="meta-fecha" />
+        <input type="date" id="m-fecha">
       </div>
+    </div>
+    <div class="meta-grid three" style="margin-bottom:14px">
       <div class="field">
         <label>Sucursal / Bodega</label>
-        <input type="text" id="meta-sucursal" placeholder="Ej. Bodegas DUWEST – CR" />
+        <input type="text" id="m-sucursal" placeholder="Ej: Planta Central CR">
+      </div>
+      <div class="field">
+        <label>Departamento</label>
+        <input type="text" id="m-dpto" placeholder="Ej: Formulación">
       </div>
       <div class="field">
         <label>Turno</label>
-        <select id="meta-turno">
+        <select id="m-turno">
           <option value="">Seleccionar...</option>
           <option>Mañana</option>
           <option>Tarde</option>
@@ -388,380 +266,578 @@
         </select>
       </div>
     </div>
-  </div>
-
-  <!-- PROGRESS STICKY -->
-  <div class="progress-section">
-    <div class="progress-top">
-      <span class="progress-label">Porcentaje de Ejecución</span>
-      <span class="progress-pct" id="pct-text">0%</span>
-    </div>
-    <div class="progress-bar-bg">
-      <div class="progress-bar-fill" id="pbar" style="width:0%"></div>
-    </div>
-    <div class="progress-stats">
-      <div class="stat-pill"><div class="stat-dot dot-green"></div><span id="cnt-cumple">0 Cumple</span></div>
-      <div class="stat-pill"><div class="stat-dot dot-red"></div><span id="cnt-nocumple">0 No Cumple</span></div>
-      <div class="stat-pill"><div class="stat-dot dot-gray"></div><span id="cnt-na">0 N/A</span></div>
-    </div>
-  </div>
-
-  <!-- SECTIONS will be rendered by JS -->
-  <div id="sections-container"></div>
-
-  <div class="cta-area">
-    <button class="btn-report" id="btn-report" onclick="openReport()">📄 Generar Informe de Cumplimiento</button>
-  </div>
-</div>
-
-<!-- REPORT MODAL -->
-<div class="modal-overlay" id="report-modal">
-  <div class="modal">
-    <div class="modal-header">
-      <div>
-        <h2>Informe de Cumplimiento</h2>
-        <p>Área de Re-Empaque y Re-Envase de Agroquímicos</p>
+    <div class="meta-grid">
+      <div class="field">
+        <label>País / Operación</label>
+        <select id="m-pais">
+          <option value="">Seleccionar...</option>
+          <option>Costa Rica</option>
+          <option>Guatemala</option>
+          <option>Ambos</option>
+        </select>
       </div>
-      <button class="btn-close" onclick="closeReport()">✕</button>
-    </div>
-    <div id="report-content"></div>
-    <div class="report-actions">
-      <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
-      <button class="btn-print" onclick="closeReport()">Cerrar</button>
+      <div class="field">
+        <label>Observaciones generales</label>
+        <input type="text" id="m-obs" placeholder="Notas generales de la auditoría">
+      </div>
     </div>
   </div>
+
+  <!-- PROGRESS -->
+  <div class="sticky-progress">
+    <div class="sp-top">
+      <span class="sp-label">Progreso de ejecución</span>
+      <span class="sp-pct" id="sp-pct">0%</span>
+    </div>
+    <div class="sp-bar-bg"><div class="sp-bar-fill" id="sp-bar" style="width:0%"></div></div>
+    <div class="sp-stats">
+      <div class="sp-stat"><div class="sp-dot" style="background:var(--green)"></div><span id="cnt-c">0 Cumple</span></div>
+      <div class="sp-stat"><div class="sp-dot" style="background:var(--yellow)"></div><span id="cnt-p">0 Parcial</span></div>
+      <div class="sp-stat"><div class="sp-dot" style="background:var(--red)"></div><span id="cnt-nc">0 No Cumple</span></div>
+      <div class="sp-stat"><div class="sp-dot" style="background:var(--gray-300)"></div><span id="cnt-na">0 N/A</span></div>
+      <div class="sp-stat" style="margin-left:auto"><div class="sp-dot" style="background:var(--teal)"></div><span id="cnt-total">45 ítems</span></div>
+    </div>
+  </div>
+
+  <!-- SECTIONS rendered by JS -->
+  <div id="sections-wrap"></div>
+
+  <!-- SIGNATURE -->
+  <div class="sig-card">
+    <div class="sig-title">✍️ Firma del Inspector</div>
+    <div class="sig-canvas-wrap" id="sig-wrap">
+      <canvas id="sig-canvas" height="160"></canvas>
+      <div class="sig-hint" id="sig-hint">Firmá aquí con el dedo o el mouse</div>
+    </div>
+    <div class="sig-actions">
+      <button class="btn-sig-clear" onclick="clearSig()">🗑 Limpiar firma</button>
+      <div class="sig-status" id="sig-status">Sin firmar</div>
+    </div>
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="actions-row">
+    <button class="btn-main btn-report" onclick="openReport()">📄 Generar Informe de Cumplimiento</button>
+    <button class="btn-main btn-excel" onclick="exportExcel()">📊 Exportar a Excel</button>
+  </div>
+
 </div>
 
 <!-- LIGHTBOX -->
-<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
-  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
-  <img id="lb-img" src="" alt="Evidencia" onclick="event.stopPropagation()">
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lb-close">✕</button>
+  <img id="lb-img" src="" alt="">
+</div>
+
+<!-- REPORT MODAL -->
+<div class="modal-bg" id="report-modal">
+  <div class="modal">
+    <div class="modal-hdr">
+      <div>
+        <h2>Informe de Auditoría</h2>
+        <p>Formulación de Agroquímicos — Cumplimiento Regulatorio</p>
+      </div>
+      <button class="btn-close-modal" onclick="closeReport()">✕</button>
+    </div>
+    <div id="report-body"></div>
+    <div class="modal-actions">
+      <button class="btn-modal-action btn-pdf" onclick="printReport()">🖨️ Imprimir / Guardar PDF</button>
+      <button class="btn-modal-action btn-close-sec" onclick="closeReport()">Cerrar</button>
+    </div>
+  </div>
 </div>
 
 <script>
+// ============================================================
+// DATA
+// ============================================================
 const SECTIONS = [
-  { num: 1, title: "Aspectos Legales y Permisos", items: [
-    { id: "1.1", text: "El establecimiento cuenta con Permiso Sanitario de Funcionamiento vigente (actividad: almacenamiento y re-empaque de agroquímicos)." },
-    { id: "1.2", text: "La actividad de re-empaque está declarada ante el Ministerio de Salud." },
-    { id: "1.3", text: "Existe Declaración Jurada de Manejo de Sustancias Químicas Peligrosas vigente." },
-    { id: "1.4", text: "El re-envase se realiza únicamente a envases permitidos por el fabricante y la normativa." },
-    { id: "1.5", text: "Cumple con el Reglamento de Registro, Uso y Control de Plaguicidas (MAG)." },
-  ]},
-  { num: 2, title: "Infraestructura del Área", items: [
-    { id: "2.1", text: "Área física independiente y delimitada de otras operaciones." },
-    { id: "2.2", text: "Pisos impermeables, continuos, antideslizantes y resistentes a químicos." },
-    { id: "2.3", text: "Pendiente y drenaje controlado para manejo de derrames." },
-    { id: "2.4", text: "Paredes y superficies lavables y no absorbentes." },
-    { id: "2.5", text: "Techo que impide ingreso de lluvia, polvo o fauna." },
-    { id: "2.6", text: "Iluminación suficiente (natural o artificial) sin generar sombras críticas." },
-    { id: "2.7", text: "Ventilación mecánica en buen estado en cuanto a inyección y extracción." },
-    { id: "2.8", text: "Acceso restringido y señalizado (solo personal autorizado)." },
-  ]},
-  { num: 3, title: "Equipos y Herramientas", items: [
-    { id: "3.1", text: "Mesas y superficies de trabajo resistentes a sustancias químicas." },
-    { id: "3.2", text: "Bombas, embudos y sistemas de trasiego en buen estado." },
-    { id: "3.3", text: "Equipos exclusivos para agroquímicos (no uso cruzado)." },
-    { id: "3.4", text: "Balanzas calibradas y en buen estado (si aplica)." },
-    { id: "3.5", text: "Herramientas limpias y sin residuos visibles." },
-    { id: "3.6", text: "Existencia de sistema de drenaje limpio y sin suciedad." },
-  ]},
-  { num: 4, title: "Envases y Material de Empaque", items: [
-    { id: "4.1", text: "Envases compatibles químicamente con el producto." },
-    { id: "4.2", text: "Envases limpios, secos y en buen estado." },
-    { id: "4.3", text: "Envases nuevos o reutilizados solo si la normativa lo permite." },
-    { id: "4.4", text: "Tapas herméticas y sistemas de cierre seguros." },
-    { id: "4.5", text: "Prohibido el uso de envases de alimentos o bebidas." },
-  ]},
-  { num: 5, title: "Etiquetado y SGA", items: [
-    { id: "5.1", text: "Todo producto reenvasado cuenta con etiqueta completa y legible." },
-    { id: "5.2", text: "Etiquetado conforme al Sistema Globalmente Armonizado (SGA)." },
-    { id: "5.3", text: "Nombre comercial presente en la etiqueta." },
-    { id: "5.4", text: "Ingrediente activo indicado." },
-    { id: "5.5", text: "Pictogramas de peligro incluidos." },
-    { id: "5.6", text: "Palabra de advertencia visible." },
-    { id: "5.7", text: "Indicaciones de riesgo detalladas." },
-    { id: "5.8", text: "Medidas de seguridad especificadas." },
-    { id: "5.9", text: "Etiquetas resistentes a humedad y manipulación." },
-  ]},
-  { num: 6, title: "Seguridad Ocupacional (MTSS)", items: [
-    { id: "6.1", text: "Personal capacitado en manejo seguro de agroquímicos." },
-    { id: "6.2", text: "Guantes resistentes a químicos disponibles." },
-    { id: "6.3", text: "Gafas de seguridad disponibles." },
-    { id: "6.4", text: "Mascarilla o respirador (según producto) disponible." },
-    { id: "6.5", text: "Delantal o overol disponible." },
-    { id: "6.6", text: "Duchas de emergencia o acceso inmediato a agua." },
-    { id: "6.7", text: "Lavaojos disponible y operativo." },
-    { id: "6.8", text: "Señalización de uso obligatorio de EPP." },
-    { id: "6.9", text: "Prohibido comer, beber o fumar en el área." },
-  ]},
-  { num: 7, title: "Manejo de Derrames y Emergencias", items: [
-    { id: "7.1", text: "Kit de derrames disponible (absorbentes, pala, contenedor)." },
-    { id: "7.2", text: "Procedimiento escrito para atención de derrames." },
-    { id: "7.3", text: "Personal capacitado en respuesta a emergencias químicas." },
-    { id: "7.4", text: "Extintores adecuados y vigentes tipo ABC." },
-    { id: "7.5", text: "Rutas de evacuación señalizadas." },
-    { id: "7.6", text: "Contactos de emergencia visibles." },
-  ]},
-  { num: 8, title: "Gestión de Residuos", items: [
-    { id: "8.1", text: "Residuos líquidos y sólidos segregados correctamente." },
-    { id: "8.2", text: "Envases vacíos sometidos a triple lavado cuando aplique." },
-    { id: "8.3", text: "Residuos peligrosos almacenados temporalmente en área señalizada." },
-    { id: "8.4", text: "Entrega a gestor autorizado con respaldo documental." },
-    { id: "8.5", text: "Registro de generación y disposición de residuos." },
-  ]},
-  { num: 9, title: "Documentación y Registros", items: [
-    { id: "9.1", text: "Procedimiento escrito de re-empaque y re-envase." },
-    { id: "9.2", text: "Hojas de Datos de Seguridad (HDS) disponibles." },
-    { id: "9.3", text: "Registros de capacitación del personal." },
-    { id: "9.4", text: "Bitácoras de re-empaque (fecha, producto, lote, responsable)." },
-    { id: "9.5", text: "Inspecciones internas documentadas." },
-  ]},
-  { num: 10, title: "Señalización y Orden", items: [
-    { id: "10.1", text: "Señalización de riesgo químico visible." },
-    { id: "10.2", text: 'Área rotulada como "Re-Empaque y Re-Envase de Agroquímicos".' },
-    { id: "10.3", text: "Orden y limpieza permanentes." },
-    { id: "10.4", text: "Pasillos despejados." },
-    { id: "10.5", text: "Productos identificados y organizados por compatibilidad." },
-  ]},
+  {
+    num:1, title:"Requisitos Legales y Registro",
+    items:[
+      {id:1, cat:"Registro", req:"Empresa formuladora registrada ante autoridad competente", tipo:"LE", evidencia:"Certificado registro", crit:"alta"},
+      {id:2, cat:"Registro", req:"Productos formulados cuentan con registro vigente", tipo:"LE", evidencia:"Registro producto", crit:"alta"},
+      {id:3, cat:"Registro", req:"Ingredientes activos autorizados", tipo:"LE", evidencia:"Listado materias primas", crit:"alta"},
+      {id:4, cat:"Registro", req:"Permiso sanitario o funcionamiento vigente", tipo:"LE", evidencia:"Permiso oficial", crit:"alta"},
+      {id:5, cat:"Documentación", req:"Listado maestro actualizado de materias primas", tipo:"LD", evidencia:"Inventario químico", crit:"media"},
+    ]
+  },
+  {
+    num:2, title:"Control Operativo de Formulación",
+    items:[
+      {id:6, cat:"Operación", req:"Trazabilidad por lote en formulación", tipo:"LD", evidencia:"Registro producción", crit:"alta"},
+      {id:7, cat:"Operación", req:"Orden de formulación documentada", tipo:"LD", evidencia:"Procedimientos", crit:"alta"},
+      {id:8, cat:"Operación", req:"Procedimiento para recepción de materias primas", tipo:"LD", evidencia:"Procedimiento escrito", crit:"media"},
+      {id:9, cat:"Operación", req:"Procedimiento para mezcla y formulación", tipo:"LD", evidencia:"Manual operación", crit:"alta"},
+      {id:10, cat:"Operación", req:"Equipos de pesaje calibrados", tipo:"LD", evidencia:"Certificados calibración", crit:"media"},
+      {id:11, cat:"Operación", req:"Procedimiento de limpieza entre formulaciones", tipo:"BT", evidencia:"Registro limpieza", crit:"media"},
+      {id:12, cat:"Operación", req:"Control de contaminación cruzada", tipo:"BT", evidencia:"Procedimiento", crit:"alta"},
+    ]
+  },
+  {
+    num:3, title:"Infraestructura del Área",
+    items:[
+      {id:13, cat:"Infraestructura", req:"Área de formulación separada de oficinas y comedor", tipo:"LD", evidencia:"Inspección", crit:"alta"},
+      {id:14, cat:"Infraestructura", req:"Piso impermeable resistente a químicos", tipo:"BT", evidencia:"Inspección", crit:"media"},
+      {id:15, cat:"Infraestructura", req:"Drenaje controlado y contenido", tipo:"LD", evidencia:"Inspección", crit:"alta"},
+      {id:16, cat:"Infraestructura", req:"Ventilación adecuada o extracción localizada", tipo:"LD", evidencia:"Inspección", crit:"alta"},
+      {id:17, cat:"Infraestructura", req:"Iluminación adecuada para operaciones", tipo:"LD", evidencia:"Inspección", crit:"media"},
+      {id:18, cat:"Infraestructura", req:"Contención secundaria para derrames", tipo:"BT", evidencia:"Inspección", crit:"alta"},
+    ]
+  },
+  {
+    num:4, title:"Almacenamiento de Sustancias Químicas",
+    items:[
+      {id:19, cat:"Almacenamiento", req:"Materias primas etiquetadas correctamente", tipo:"LE", evidencia:"Etiquetas/SDS", crit:"alta"},
+      {id:20, cat:"Almacenamiento", req:"SDS disponibles para todas las sustancias", tipo:"LE", evidencia:"Carpeta SDS", crit:"alta"},
+      {id:21, cat:"Almacenamiento", req:"Compatibilidad química en almacenamiento", tipo:"BT", evidencia:"Inspección", crit:"alta"},
+      {id:22, cat:"Almacenamiento", req:"Envases originales íntegros", tipo:"LD", evidencia:"Inspección", crit:"media"},
+      {id:23, cat:"Almacenamiento", req:"Inventario actualizado de químicos", tipo:"LD", evidencia:"Registro inventario", crit:"media"},
+    ]
+  },
+  {
+    num:5, title:"Seguridad Ocupacional",
+    items:[
+      {id:24, cat:"Seguridad", req:"Evaluación de riesgo químico realizada", tipo:"LD", evidencia:"Informe evaluación", crit:"alta"},
+      {id:25, cat:"Seguridad", req:"Uso obligatorio de EPP", tipo:"LE", evidencia:"Observación", crit:"alta"},
+      {id:26, cat:"Seguridad", req:"Entrega documentada de EPP", tipo:"LD", evidencia:"Registro", crit:"media"},
+      {id:27, cat:"Seguridad", req:"Capacitación en manejo de agroquímicos", tipo:"LE", evidencia:"Registros capacitación", crit:"alta"},
+      {id:28, cat:"Seguridad", req:"Selección técnica de respiradores", tipo:"BT", evidencia:"Evaluación riesgo", crit:"media"},
+      {id:29, cat:"Seguridad", req:"Lavamanos y facilidades higiénicas", tipo:"LD", evidencia:"Inspección", crit:"media"},
+      {id:30, cat:"Seguridad", req:"Prohibición de comer o fumar en área", tipo:"LE", evidencia:"Señalización", crit:"media"},
+    ]
+  },
+  {
+    num:6, title:"Emergencias y Derrames",
+    items:[
+      {id:31, cat:"Emergencia", req:"Plan de respuesta a derrames", tipo:"LE", evidencia:"Procedimiento", crit:"alta"},
+      {id:32, cat:"Emergencia", req:"Kit de derrames disponible", tipo:"BT", evidencia:"Inspección", crit:"alta"},
+      {id:33, cat:"Emergencia", req:"Ducha de emergencia funcional", tipo:"BT", evidencia:"Prueba", crit:"alta"},
+      {id:34, cat:"Emergencia", req:"Lavaojos funcional", tipo:"BT", evidencia:"Prueba", crit:"alta"},
+      {id:35, cat:"Emergencia", req:"Extintores inspeccionados", tipo:"LE", evidencia:"Registro mantenimiento", crit:"alta"},
+      {id:36, cat:"Emergencia", req:"Señalización de seguridad", tipo:"LE", evidencia:"Inspección", crit:"media"},
+    ]
+  },
+  {
+    num:7, title:"Gestión Ambiental y Residuos",
+    items:[
+      {id:37, cat:"Residuos", req:"Identificación de residuos peligrosos", tipo:"LE", evidencia:"Inventario residuos", crit:"alta"},
+      {id:38, cat:"Residuos", req:"Almacenamiento temporal adecuado", tipo:"LD", evidencia:"Inspección", crit:"alta"},
+      {id:39, cat:"Residuos", req:"Disposición mediante gestor autorizado", tipo:"LE", evidencia:"Manifiestos", crit:"alta"},
+      {id:40, cat:"Residuos", req:"Prohibición de incineración no controlada", tipo:"LE", evidencia:"Procedimiento", crit:"alta"},
+      {id:41, cat:"Residuos", req:"Control de derrames menores", tipo:"LD", evidencia:"Registro incidentes", crit:"media"},
+    ]
+  },
+  {
+    num:8, title:"Registros y Mejora Continua",
+    items:[
+      {id:42, cat:"Registros", req:"Registro de incidentes químicos", tipo:"LD", evidencia:"Reporte incidentes", crit:"media"},
+      {id:43, cat:"Registros", req:"Registro de mantenimiento equipos", tipo:"LD", evidencia:"Plan mantenimiento", crit:"media"},
+      {id:44, cat:"Registros", req:"Auditorías internas de seguridad química", tipo:"BT", evidencia:"Informe auditoría", crit:"media"},
+      {id:45, cat:"Registros", req:"Seguimiento de acciones correctivas", tipo:"LD", evidencia:"Plan acción", crit:"alta"},
+    ]
+  }
 ];
 
-// State
+const TIPO_LABELS = {LE:"LE – Legal Expreso", LD:"LD – Legal Derivado", BT:"BT – Buena Práctica"};
+const CRIT_LABELS = {alta:"🔴 Alta", media:"🟠 Media", baja:"🟢 Baja"};
+
+// STATE
 const state = {};
 SECTIONS.forEach(s => s.items.forEach(item => {
-  state[item.id] = { status: null, obs: '', photos: [] };
+  state[item.id] = { status: null, obs: '', photos: [], _open: false };
 }));
 
-// Render
-function render() {
-  const container = document.getElementById('sections-container');
-  container.innerHTML = '';
-  SECTIONS.forEach(section => {
+// ============================================================
+// RENDER SECTIONS
+// ============================================================
+function renderSections() {
+  const wrap = document.getElementById('sections-wrap');
+  wrap.innerHTML = '';
+  SECTIONS.forEach(sec => {
+    const done = sec.items.filter(i => state[i.id].status !== null).length;
     const card = document.createElement('div');
-    card.className = 'card';
-    const hdr = document.createElement('div');
-    hdr.className = 'section-header';
-    const secTotal = section.items.length;
-    const secDone = section.items.filter(i => state[i.id].status !== null).length;
-    hdr.innerHTML = `
-      <div class="section-num">${section.num}</div>
-      <div class="section-title">${section.title}</div>
-      <div class="section-badge">${secDone}/${secTotal}</div>
+    card.className = 'section-card';
+    card.innerHTML = `
+      <div class="section-hdr">
+        <div class="section-num">${sec.num}</div>
+        <div class="section-name">${sec.title}</div>
+        <div class="section-badge">${done}/${sec.items.length}</div>
+      </div>
     `;
-    card.appendChild(hdr);
-    section.items.forEach(item => {
-      const s = state[item.id].status;
-      const photoCount = state[item.id].photos.length;
-      const safeId = item.id.replace('.','_');
+    sec.items.forEach(item => {
+      const st = state[item.id];
       const row = document.createElement('div');
-      row.className = `item-row${s ? ' s-' + s.replace(' ','') : ''}`;
+      row.className = `item-row${st.status ? ' s-'+st.status : ''}`;
 
-      // Build gallery thumbs HTML
-      let thumbsHtml = state[item.id].photos.map((src, idx) => `
-        <div class="photo-thumb-wrap">
-          <img src="${src}" onclick="openLightbox('${item.id}', ${idx})" title="Ver foto">
-          <button class="del-btn" onclick="deletePhoto('${item.id}',${idx})" title="Eliminar">✕</button>
+      const thumbsHtml = st.photos.map((src,idx) => `
+        <div class="photo-thumb">
+          <img src="${src}" onclick="openLightbox('${src}')" title="Ver foto">
+          <button class="del-ph" onclick="delPhoto(${item.id},${idx})">✕</button>
         </div>
       `).join('');
 
       row.innerHTML = `
-        <div class="item-main" onclick="toggleEvidence('ev-${safeId}')">
+        <div class="item-main" onclick="toggleEv(${item.id})">
           <span class="item-num">${item.id}</span>
-          <span class="item-label">${item.text}</span>
-          <div class="status-buttons" onclick="event.stopPropagation()">
-            <button class="status-btn ${s==='cumple'?'active-cumple':''}" onclick="setStatus('${item.id}','cumple')">✓ Cumple</button>
-            <button class="status-btn ${s==='nocumple'?'active-nocumple':''}" onclick="setStatus('${item.id}','nocumple')">✗ No Cumple</button>
-            <button class="status-btn ${s==='na'?'active-na':''}" onclick="setStatus('${item.id}','na')">N/A</button>
+          <div class="item-content">
+            <div class="item-label">${item.req}</div>
+            <div class="item-tags">
+              <span class="tag tag-${item.tipo.toLowerCase()}">${item.tipo}</span>
+              <span class="tag tag-${item.crit}">${CRIT_LABELS[item.crit]}</span>
+              <span class="tag tag-evidencia">📄 ${item.evidencia}</span>
+            </div>
+          </div>
+          <div class="item-controls" onclick="event.stopPropagation()">
+            <button class="ctrl-btn${st.status==='cumple'?' a-cumple':''}" onclick="setStatus(${item.id},'cumple')">✓ Cumple</button>
+            <button class="ctrl-btn${st.status==='parcial'?' a-parcial':''}" onclick="setStatus(${item.id},'parcial')">◑ Parcial</button>
+            <button class="ctrl-btn${st.status==='nocumple'?' a-nocumple':''}" onclick="setStatus(${item.id},'nocumple')">✗ No Cumple</button>
+            <button class="ctrl-btn${st.status==='na'?' a-na':''}" onclick="setStatus(${item.id},'na')">N/A</button>
           </div>
         </div>
-        <div class="evidence-panel ${state[item.id]._open ? 'visible' : ''}" id="ev-${safeId}">
-          <div class="evidence-inner">
-            <div>
-              <div class="photo-section-label">
-                📷 Fotos de Evidencia
-                ${photoCount > 0 ? `<span class="photo-count-badge">${photoCount} foto${photoCount>1?'s':''}</span>` : ''}
+        <div class="ev-panel${st._open?' open':''}" id="ev-${item.id}">
+          <div class="ev-inner">
+            <div class="ev-row">
+              <div class="photo-section">
+                <div class="photo-sec-label">📷 Evidencia fotográfica${st.photos.length>0?`<span class="photo-count">${st.photos.length}</span>`:''}</div>
+                <div class="photo-gallery">
+                  ${thumbsHtml}
+                  <label class="add-photo-btn">
+                    <input type="file" accept="image/*" multiple onchange="addPhotos(event,${item.id})">
+                    <span class="add-icon">＋</span>
+                    <span class="add-lbl">Agregar foto</span>
+                  </label>
+                </div>
               </div>
-              <div class="photo-gallery" id="gallery-${safeId}">
-                ${thumbsHtml}
-                <label class="photo-add-btn" title="Agregar foto">
-                  <input type="file" accept="image/*" multiple onchange="handlePhotos(event,'${item.id}')">
-                  <span class="add-icon">＋</span>
-                  <span class="add-label">Agregar foto</span>
-                </label>
+              <div class="obs-wrap">
+                <label>Observaciones / Hallazgos</label>
+                <textarea placeholder="Describí el hallazgo, condición observada, acción requerida..." onchange="setObs(${item.id},this.value)">${st.obs}</textarea>
               </div>
-            </div>
-            <div class="obs-field">
-              <label>Observaciones</label>
-              <textarea placeholder="Describe hallazgos, condiciones observadas..." onchange="setObs('${item.id}',this.value)">${state[item.id].obs}</textarea>
             </div>
           </div>
         </div>
       `;
       card.appendChild(row);
     });
-    container.appendChild(card);
+    wrap.appendChild(card);
   });
   updateProgress();
 }
 
-function toggleEvidence(id) {
-  const panel = document.getElementById(id);
-  panel.classList.toggle('visible');
+// ============================================================
+// INTERACTIONS
+// ============================================================
+function toggleEv(id) {
+  state[id]._open = !state[id]._open;
+  const panel = document.getElementById('ev-'+id);
+  if(panel) panel.classList.toggle('open', state[id]._open);
 }
 
-function setStatus(id, status) {
-  const prev = state[id].status;
-  state[id].status = prev === status ? null : status;
-  // Auto-open evidence panel on any status selection
-  if (state[id].status !== null) state[id]._open = true;
-  render();
+function setStatus(id, st) {
+  state[id].status = state[id].status === st ? null : st;
+  state[id]._open = true;
+  renderSections();
 }
 
 function setObs(id, val) { state[id].obs = val; }
 
-function handlePhotos(event, id) {
+function addPhotos(event, id) {
   const files = Array.from(event.target.files);
-  if (!files.length) return;
-  let loaded = 0;
-  files.forEach(file => {
-    const reader = new FileReader();
-    reader.onload = e => {
+  let done = 0;
+  files.forEach(f => {
+    const r = new FileReader();
+    r.onload = e => {
       state[id].photos.push(e.target.result);
       state[id]._open = true;
-      loaded++;
-      if (loaded === files.length) render();
+      done++;
+      if(done===files.length) renderSections();
     };
-    reader.readAsDataURL(file);
+    r.readAsDataURL(f);
   });
 }
 
-function deletePhoto(id, idx) {
-  state[id].photos.splice(idx, 1);
+function delPhoto(id, idx) {
+  state[id].photos.splice(idx,1);
   state[id]._open = true;
-  render();
+  renderSections();
 }
 
-// Lightbox
-function openLightbox(id, idx) {
-  const src = state[id].photos[idx];
-  document.getElementById('lb-img').src = src;
-  document.getElementById('lightbox').classList.add('visible');
-}
-function closeLightbox() {
-  document.getElementById('lightbox').classList.remove('visible');
-}
-
+// ============================================================
+// PROGRESS
+// ============================================================
 function updateProgress() {
-  let total = 0, cumple = 0, nocumple = 0, na = 0;
-  SECTIONS.forEach(s => s.items.forEach(item => {
+  let total=0,cumple=0,parcial=0,nocumple=0,na=0;
+  SECTIONS.forEach(s=>s.items.forEach(i=>{
     total++;
-    const st = state[item.id].status;
-    if (st === 'cumple') cumple++;
-    else if (st === 'nocumple') nocumple++;
-    else if (st === 'na') na++;
+    const st=state[i.id].status;
+    if(st==='cumple') cumple++;
+    else if(st==='parcial') parcial++;
+    else if(st==='nocumple') nocumple++;
+    else if(st==='na') na++;
   }));
-  const answered = cumple + nocumple + na;
-  const pct = Math.round((answered / total) * 100);
-  document.getElementById('pct-text').textContent = pct + '%';
-  document.getElementById('pbar').style.width = pct + '%';
-  document.getElementById('header-pct').textContent = pct + '% completado';
-  document.getElementById('cnt-cumple').textContent = cumple + ' Cumple';
-  document.getElementById('cnt-nocumple').textContent = nocumple + ' No Cumple';
-  document.getElementById('cnt-na').textContent = na + ' N/A';
+  const answered=cumple+parcial+nocumple+na;
+  const pct=Math.round(answered/total*100);
+  document.getElementById('sp-pct').textContent=pct+'%';
+  document.getElementById('sp-bar').style.width=pct+'%';
+  document.getElementById('hdr-pct').textContent=pct+'% completado';
+  document.getElementById('cnt-c').textContent=cumple+' Cumple';
+  document.getElementById('cnt-p').textContent=parcial+' Parcial';
+  document.getElementById('cnt-nc').textContent=nocumple+' No Cumple';
+  document.getElementById('cnt-na').textContent=na+' N/A';
+  document.getElementById('cnt-total').textContent=(total-answered)+' pendientes';
 }
 
+// ============================================================
+// SIGNATURE
+// ============================================================
+let sigCanvas, sigCtx, sigDrawing=false, sigHasMark=false;
+function initSig() {
+  sigCanvas = document.getElementById('sig-canvas');
+  const wrap = document.getElementById('sig-wrap');
+  sigCanvas.width = wrap.offsetWidth || 600;
+  sigCtx = sigCanvas.getContext('2d');
+  sigCtx.strokeStyle='#0a2540';
+  sigCtx.lineWidth=2.5;
+  sigCtx.lineCap='round';
+  sigCtx.lineJoin='round';
+
+  const pos = (e) => {
+    const r = sigCanvas.getBoundingClientRect();
+    if(e.touches) return {x:e.touches[0].clientX-r.left, y:e.touches[0].clientY-r.top};
+    return {x:e.clientX-r.left, y:e.clientY-r.top};
+  };
+  sigCanvas.addEventListener('mousedown', e=>{sigDrawing=true;const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y)});
+  sigCanvas.addEventListener('mousemove', e=>{if(!sigDrawing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();markSig()});
+  sigCanvas.addEventListener('mouseup', ()=>sigDrawing=false);
+  sigCanvas.addEventListener('mouseleave', ()=>sigDrawing=false);
+  sigCanvas.addEventListener('touchstart', e=>{e.preventDefault();sigDrawing=true;const p=pos(e);sigCtx.beginPath();sigCtx.moveTo(p.x,p.y)},{passive:false});
+  sigCanvas.addEventListener('touchmove', e=>{e.preventDefault();if(!sigDrawing)return;const p=pos(e);sigCtx.lineTo(p.x,p.y);sigCtx.stroke();markSig()},{passive:false});
+  sigCanvas.addEventListener('touchend', ()=>sigDrawing=false);
+}
+function markSig(){
+  sigHasMark=true;
+  document.getElementById('sig-hint').style.display='none';
+  const s=document.getElementById('sig-status');
+  s.textContent='✓ Firmado';s.className='sig-status signed';
+}
+function clearSig(){
+  sigCtx.clearRect(0,0,sigCanvas.width,sigCanvas.height);
+  sigHasMark=false;
+  document.getElementById('sig-hint').style.display='block';
+  const s=document.getElementById('sig-status');
+  s.textContent='Sin firmar';s.className='sig-status';
+}
+function getSigDataURL() {
+  return sigHasMark ? sigCanvas.toDataURL('image/png') : null;
+}
+
+// ============================================================
+// LIGHTBOX
+// ============================================================
+function openLightbox(src){
+  document.getElementById('lb-img').src=src;
+  document.getElementById('lightbox').classList.add('open');
+}
+function closeLightbox(){document.getElementById('lightbox').classList.remove('open')}
+
+// ============================================================
+// REPORT
+// ============================================================
 function openReport() {
-  let total = 0, cumple = 0, nocumple = 0, na = 0;
-  SECTIONS.forEach(s => s.items.forEach(item => {
+  let total=0,cumple=0,parcial=0,nocumple=0,na=0,altaNC=0;
+  SECTIONS.forEach(s=>s.items.forEach(i=>{
     total++;
-    const st = state[item.id].status;
-    if (st === 'cumple') cumple++;
-    else if (st === 'nocumple') nocumple++;
-    else if (st === 'na') na++;
+    const st=state[i.id].status;
+    if(st==='cumple')cumple++;
+    else if(st==='parcial')parcial++;
+    else if(st==='nocumple'){nocumple++;if(i.crit==='alta')altaNC++;}
+    else if(st==='na')na++;
   }));
-  const answered = cumple + nocumple + na;
-  // Exclude N/A from compliance calculation
-  const applicable = cumple + nocumple;
-  const compliance = applicable > 0 ? Math.round((cumple / applicable) * 100) : 0;
-  const completion = Math.round((answered / total) * 100);
+  const applicable=cumple+parcial+nocumple;
+  const compliance=applicable>0?Math.round((cumple+parcial*0.5)/applicable*100):0;
+  const completion=Math.round((cumple+parcial+nocumple+na)/total*100);
+  const cls=compliance>=80?'good':compliance>=60?'warn':'bad';
 
-  let bannerClass = '';
-  if (compliance >= 80) bannerClass = '';
-  else if (compliance >= 60) bannerClass = 'warn';
-  else bannerClass = 'danger';
+  const inspector=document.getElementById('m-inspector').value||'—';
+  const fecha=document.getElementById('m-fecha').value||'—';
+  const sucursal=document.getElementById('m-sucursal').value||'—';
+  const dpto=document.getElementById('m-dpto').value||'—';
+  const turno=document.getElementById('m-turno').value||'—';
+  const pais=document.getElementById('m-pais').value||'—';
+  const obsGen=document.getElementById('m-obs').value||'—';
 
-  const inspector = document.getElementById('meta-inspector').value || '—';
-  const fecha = document.getElementById('meta-fecha').value || '—';
-  const sucursal = document.getElementById('meta-sucursal').value || 'Bodegas DUWEST – Costa Rica';
-  const turno = document.getElementById('meta-turno').value || '—';
-
-  let html = `
-    <div class="report-meta">
-      <div class="report-meta-item"><strong>Inspector</strong>${inspector}</div>
-      <div class="report-meta-item"><strong>Fecha</strong>${fecha}</div>
-      <div class="report-meta-item"><strong>Sucursal</strong>${sucursal}</div>
-      <div class="report-meta-item"><strong>Turno</strong>${turno}</div>
+  let html=`
+    <div class="report-meta-grid">
+      <div class="rmi"><strong>Inspector</strong>${inspector}</div>
+      <div class="rmi"><strong>Fecha</strong>${fecha}</div>
+      <div class="rmi"><strong>Sucursal / Bodega</strong>${sucursal}</div>
+      <div class="rmi"><strong>Departamento</strong>${dpto}</div>
+      <div class="rmi"><strong>Turno</strong>${turno}</div>
+      <div class="rmi"><strong>País / Operación</strong>${pais}</div>
+      <div class="rmi" style="grid-column:span 2"><strong>Observaciones generales</strong>${obsGen}</div>
     </div>
-    <div class="score-banner ${bannerClass}">
-      <div class="score-big">${compliance}%</div>
-      <div class="score-right">
-        <div class="score-label">Porcentaje de Cumplimiento</div>
-        <div class="score-detail">${cumple} cumple · ${nocumple} no cumple · ${na} N/A · ${total - answered} pendientes</div>
-        <div class="score-label" style="margin-top:8px">Ejecución del formulario: ${completion}%</div>
+    <div class="score-block ${cls}">
+      <div class="score-pct">${compliance}%</div>
+      <div class="score-info">
+        <div class="lbl">Índice de Cumplimiento</div>
+        <div class="det">${cumple} cumple · ${parcial} parcial · ${nocumple} no cumple · ${na} N/A</div>
+        <div class="score-sub">Ejecución del formulario: ${completion}% · ${altaNC} ítem${altaNC!==1?'s':''} crítico${altaNC!==1?'s':''} sin cumplir</div>
       </div>
     </div>
   `;
 
-  // Sections breakdown
-  SECTIONS.forEach(section => {
-    const nocumpleItems = section.items.filter(i => state[i.id].status === 'nocumple');
-    const pendItems = section.items.filter(i => state[i.id].status === null);
-    const cumpleCount = section.items.filter(i => state[i.id].status === 'cumple').length;
-    const naCount = section.items.filter(i => state[i.id].status === 'na').length;
-    const applicable = section.items.length - naCount;
-    const pct = applicable > 0 ? Math.round((cumpleCount / applicable) * 100) : 100;
+  SECTIONS.forEach(sec=>{
+    const secItems=sec.items;
+    const secCumple=secItems.filter(i=>state[i.id].status==='cumple').length;
+    const secNA=secItems.filter(i=>state[i.id].status==='na').length;
+    const secApplicable=secItems.length-secNA;
+    const secPct=secApplicable>0?Math.round(secCumple/secApplicable*100):100;
+    const problems=secItems.filter(i=>state[i.id].status==='nocumple'||state[i.id].status==='parcial');
+    const pending=secItems.filter(i=>state[i.id].status===null);
 
-    html += `<div class="report-section">
-      <h3>${section.num}. ${section.title} — ${pct}% cumplimiento</h3>`;
+    html+=`<div class="rep-section">
+      <h3>${sec.num}. ${sec.title} — ${secPct}% cumplimiento</h3>`;
 
-    if (nocumpleItems.length === 0 && pendItems.length === 0) {
-      html += `<div style="font-size:13px;color:var(--green);padding:6px 0;">✅ Sección sin hallazgos</div>`;
+    if(problems.length===0&&pending.length===0){
+      html+=`<div style="font-size:12px;color:var(--green);padding:5px 0">✅ Sin hallazgos en esta sección</div>`;
     }
-
-    nocumpleItems.forEach(item => {
-      const photoCount = state[item.id].photos.length;
-      html += `<div class="report-item">
-        <span class="ritem-num">${item.id}</span>
-        <div class="ritem-text">
-          ${item.text}
-          ${state[item.id].obs ? `<div class="ritem-obs">📝 ${state[item.id].obs}</div>` : ''}
-          ${photoCount > 0 ? `<div class="ritem-obs">📷 ${photoCount} foto${photoCount>1?'s':''} de evidencia adjunta${photoCount>1?'s':''}</div>` : ''}
+    problems.forEach(item=>{
+      const st=state[item.id];
+      const badge=st.status==='nocumple'?'b-nocumple':'b-parcial';
+      const label=st.status==='nocumple'?'No Cumple':'Parcial';
+      html+=`<div class="rep-item">
+        <span class="rep-num">${item.id}</span>
+        <div class="rep-text">
+          ${item.req}
+          <div class="rep-tags">
+            <span class="tag tag-${item.tipo.toLowerCase()}">${item.tipo}</span>
+            <span class="tag tag-${item.crit}">${CRIT_LABELS[item.crit]}</span>
+          </div>
+          ${st.obs?`<div class="rep-obs">📝 ${st.obs}</div>`:''}
+          ${st.photos.length>0?`<div class="rep-photos">📷 ${st.photos.length} foto${st.photos.length>1?'s':''} de evidencia</div>`:''}
         </div>
-        <span class="badge badge-nocumple">No Cumple</span>
+        <span class="badge ${badge}">${label}</span>
       </div>`;
     });
-    pendItems.forEach(item => {
-      html += `<div class="report-item">
-        <span class="ritem-num">${item.id}</span>
-        <div class="ritem-text">${item.text}</div>
-        <span class="badge badge-pend">Pendiente</span>
+    pending.forEach(item=>{
+      html+=`<div class="rep-item">
+        <span class="rep-num">${item.id}</span>
+        <div class="rep-text">${item.req}</div>
+        <span class="badge b-pend">Pendiente</span>
       </div>`;
     });
-    html += `</div>`;
+    html+=`</div>`;
   });
 
-  document.getElementById('report-content').innerHTML = html;
-  document.getElementById('report-modal').classList.add('visible');
+  // Signature
+  const sigData=getSigDataURL();
+  html+=`<div class="rep-sig">`;
+  if(sigData){
+    html+=`<img src="${sigData}" style="max-height:80px;border-bottom:1px solid #ccc;padding-bottom:6px">`;
+  } else {
+    html+=`<div style="height:60px;border-bottom:1px solid #ccc;margin-bottom:6px"></div>`;
+  }
+  html+=`<div class="rep-sig-label">Firma del Inspector: ${inspector} · ${fecha}</div></div>`;
+
+  document.getElementById('report-body').innerHTML=html;
+  document.getElementById('report-modal').classList.add('open');
 }
 
-function closeReport() {
-  document.getElementById('report-modal').classList.remove('visible');
+function closeReport(){document.getElementById('report-modal').classList.remove('open')}
+function printReport(){window.print()}
+
+// ============================================================
+// EXCEL EXPORT
+// ============================================================
+function exportExcel() {
+  const wb = XLSX.utils.book_new();
+
+  // META sheet
+  const metaData = [
+    ['Campo','Valor'],
+    ['Inspector',document.getElementById('m-inspector').value||''],
+    ['Fecha',document.getElementById('m-fecha').value||''],
+    ['Sucursal / Bodega',document.getElementById('m-sucursal').value||''],
+    ['Departamento',document.getElementById('m-dpto').value||''],
+    ['Turno',document.getElementById('m-turno').value||''],
+    ['País',document.getElementById('m-pais').value||''],
+    ['Observaciones generales',document.getElementById('m-obs').value||''],
+  ];
+  const wsMeta = XLSX.utils.aoa_to_sheet(metaData);
+  wsMeta['!cols']=[{wch:25},{wch:40}];
+  XLSX.utils.book_append_sheet(wb, wsMeta, 'Encabezado');
+
+  // CHECKLIST sheet
+  const rows = [['#','Sección','Categoría','Requisito','Tipo','Criticidad','Evidencia Requerida','Estado','Observaciones','Fotos']];
+  SECTIONS.forEach(sec=>{
+    sec.items.forEach(item=>{
+      const st=state[item.id];
+      const statusLabel={cumple:'Cumple',parcial:'Parcial',nocumple:'No Cumple',na:'N/A',null:'Pendiente'};
+      rows.push([
+        item.id, sec.title, item.cat, item.req,
+        item.tipo, item.crit==='alta'?'🔴 Alta':item.crit==='media'?'🟠 Media':'🟢 Baja',
+        item.evidencia, statusLabel[st.status]||'Pendiente',
+        st.obs||'', st.photos.length>0?st.photos.length+' foto(s)':''
+      ]);
+    });
+  });
+  const wsCheck = XLSX.utils.aoa_to_sheet(rows);
+  wsCheck['!cols']=[{wch:4},{wch:30},{wch:16},{wch:55},{wch:8},{wch:12},{wch:25},{wch:12},{wch:40},{wch:10}];
+  // Style header row
+  XLSX.utils.book_append_sheet(wb, wsCheck, 'Checklist Completo');
+
+  // SUMMARY sheet
+  let cumple=0,parcial=0,nocumple=0,na=0;
+  SECTIONS.forEach(s=>s.items.forEach(i=>{
+    const st=state[i.id].status;
+    if(st==='cumple')cumple++;
+    else if(st==='parcial')parcial++;
+    else if(st==='nocumple')nocumple++;
+    else if(st==='na')na++;
+  }));
+  const total=45;
+  const applicable=cumple+parcial+nocumple;
+  const compliance=applicable>0?Math.round((cumple+parcial*0.5)/applicable*100):0;
+
+  const summaryData=[
+    ['RESUMEN DE AUDITORÍA',''],
+    ['',''],
+    ['Total ítems',total],
+    ['Cumple',cumple],
+    ['Parcial',parcial],
+    ['No Cumple',nocumple],
+    ['N/A',na],
+    ['Pendientes',total-cumple-parcial-nocumple-na],
+    ['',''],
+    ['Índice de cumplimiento',compliance+'%'],
+  ];
+  const wsSummary=XLSX.utils.aoa_to_sheet(summaryData);
+  wsSummary['!cols']=[{wch:28},{wch:16}];
+  XLSX.utils.book_append_sheet(wb,wsSummary,'Resumen');
+
+  // Save
+  const fecha=document.getElementById('m-fecha').value||'sin-fecha';
+  const sucursal=(document.getElementById('m-sucursal').value||'auditoria').replace(/[^a-zA-Z0-9]/g,'-');
+  XLSX.writeFile(wb, `Auditoria-Agroquimicos-${sucursal}-${fecha}.xlsx`);
 }
 
-// Set default date
-document.addEventListener('DOMContentLoaded', () => {
-  const today = new Date().toISOString().split('T')[0];
-  document.getElementById('meta-fecha').value = today;
-  render();
+// ============================================================
+// INIT
+// ============================================================
+window.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('m-fecha').value=new Date().toISOString().split('T')[0];
+  renderSections();
+  initSig();
+  window.addEventListener('resize',()=>{
+    if(sigCanvas){
+      const wrap=document.getElementById('sig-wrap');
+      const data=sigHasMark?sigCanvas.toDataURL():null;
+      sigCanvas.width=wrap.offsetWidth||600;
+      if(data){
+        const img=new Image();img.onload=()=>sigCtx.drawImage(img,0,0);img.src=data;
+      }
+    }
+  });
 });
 </script>
 </body>
