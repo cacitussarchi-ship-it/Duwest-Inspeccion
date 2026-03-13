@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DUWEST – Inspección Re-Empaque</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --green: #2d6a2d;
+    --green-light: #4a9e4a;
+    --green-pale: #e8f5e8;
+    --green-mid: #c8e6c8;
+    --yellow: #f5c842;
+    --red: #e05252;
+    --red-pale: #fdeaea;
+    --gray-900: #111;
+    --gray-700: #3a3a3a;
+    --gray-500: #6b6b6b;
+    --gray-300: #d0d0d0;
+    --gray-100: #f5f5f5;
+    --white: #ffffff;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(0,0,0,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: #f0f4f0;
+    color: var(--gray-900);
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .app-header {
+    background: var(--green);
+    color: white;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+  }
+  .logo-block { display: flex; align-items: center; gap: 14px; }
+  .logo-icon {
+    width: 40px; height: 40px;
+    background: white;
+    border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .logo-icon svg { width: 26px; height: 26px; }
+  .logo-text { font-size: 20px; font-weight: 700; letter-spacing: -0.5px; }
+  .logo-sub { font-size: 11px; opacity: 0.75; font-weight: 400; letter-spacing: 0.5px; }
+  .progress-pill {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    padding: 6px 16px;
+    font-size: 13px;
+    font-weight: 600;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .progress-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--yellow); }
+
+  /* MAIN LAYOUT */
+  .container { max-width: 800px; margin: 0 auto; padding: 28px 16px 80px; }
+
+  /* CARD */
+  .card {
+    background: white;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 20px;
+    overflow: hidden;
+  }
+
+  /* META FORM */
+  .meta-card { padding: 24px; }
+  .meta-card h2 { font-size: 15px; font-weight: 700; color: var(--green); margin-bottom: 18px; text-transform: uppercase; letter-spacing: 0.5px; }
+  .meta-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+  .field label { display: block; font-size: 11px; font-weight: 600; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; }
+  .field input, .field select {
+    width: 100%; padding: 10px 14px;
+    border: 1.5px solid var(--gray-300);
+    border-radius: 8px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 14px;
+    color: var(--gray-900);
+    transition: border-color 0.2s;
+    background: var(--gray-100);
+  }
+  .field input:focus, .field select:focus { outline: none; border-color: var(--green); background: white; }
+
+  /* SECTION HEADER */
+  .section-header {
+    background: var(--green);
+    color: white;
+    padding: 14px 20px;
+    display: flex; align-items: center; gap: 12px;
+  }
+  .section-num {
+    background: rgba(255,255,255,0.25);
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 13px; font-weight: 700;
+    flex-shrink: 0;
+  }
+  .section-title { font-size: 15px; font-weight: 600; }
+  .section-badge {
+    margin-left: auto;
+    background: rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 3px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  /* ITEM ROW */
+  .item-row {
+    border-bottom: 1px solid #f0f0f0;
+    padding: 0;
+    transition: background 0.15s;
+  }
+  .item-row:last-child { border-bottom: none; }
+  .item-main {
+    display: flex; align-items: center; gap: 12px;
+    padding: 14px 20px;
+    cursor: pointer;
+  }
+  .item-num { font-size: 12px; font-weight: 700; color: var(--gray-500); font-family: 'DM Mono', monospace; width: 32px; flex-shrink: 0; }
+  .item-label { flex: 1; font-size: 13.5px; color: var(--gray-700); line-height: 1.4; }
+  .status-buttons { display: flex; gap: 6px; flex-shrink: 0; }
+  .status-btn {
+    padding: 5px 11px;
+    border-radius: 6px;
+    border: 1.5px solid var(--gray-300);
+    background: white;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: var(--gray-500);
+    white-space: nowrap;
+  }
+  .status-btn:hover { transform: translateY(-1px); }
+  .status-btn.active-cumple { background: var(--green); border-color: var(--green); color: white; }
+  .status-btn.active-nocumple { background: var(--red); border-color: var(--red); color: white; }
+  .status-btn.active-na { background: var(--gray-500); border-color: var(--gray-500); color: white; }
+
+  /* EVIDENCE PANEL */
+  .evidence-panel {
+    padding: 0 20px 16px 64px;
+    display: none;
+    animation: slideDown 0.2s ease;
+  }
+  .evidence-panel.visible { display: block; }
+  @keyframes slideDown { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
+  .evidence-inner { background: var(--gray-100); border-radius: 10px; padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+
+  /* TOGGLE EVIDENCE LINK */
+  .ev-toggle {
+    font-size: 12px; font-weight: 600; color: var(--green);
+    cursor: pointer; display: flex; align-items: center; gap: 5px;
+    padding: 0 20px 10px 64px; margin-top: -6px;
+    text-decoration: none; user-select: none;
+  }
+  .ev-toggle:hover { text-decoration: underline; }
+
+  /* PHOTO SECTION */
+  .photo-section-label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; }
+  .photo-gallery { display: flex; flex-wrap: wrap; gap: 10px; align-items: flex-start; }
+  .photo-thumb-wrap {
+    position: relative; width: 90px; height: 90px; flex-shrink: 0;
+    border-radius: 10px; overflow: hidden;
+    border: 2px solid var(--green-mid);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+  .photo-thumb-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; cursor: pointer; }
+  .photo-thumb-wrap .del-btn {
+    position: absolute; top: 3px; right: 3px;
+    background: rgba(0,0,0,0.55); color: white;
+    border: none; border-radius: 50%; width: 20px; height: 20px;
+    font-size: 11px; cursor: pointer; display: flex; align-items: center; justify-content: center;
+    line-height: 1;
+  }
+  .photo-thumb-wrap .del-btn:hover { background: var(--red); }
+  .photo-add-btn {
+    width: 90px; height: 90px; flex-shrink: 0;
+    border: 2px dashed var(--gray-300);
+    border-radius: 10px;
+    background: white;
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    cursor: pointer; transition: border-color 0.2s, background 0.2s;
+    gap: 4px;
+  }
+  .photo-add-btn:hover { border-color: var(--green); background: var(--green-pale); }
+  .photo-add-btn .add-icon { font-size: 24px; }
+  .photo-add-btn .add-label { font-size: 10px; font-weight: 600; color: var(--gray-500); text-align: center; line-height: 1.2; }
+  .photo-add-btn input { display: none; }
+  .photo-count-badge {
+    font-size: 11px; font-weight: 600; color: var(--green);
+    background: var(--green-pale); border-radius: 20px;
+    padding: 2px 8px; margin-left: 6px;
+  }
+
+  .obs-field { }
+  .obs-field textarea {
+    width: 100%; border: 1.5px solid var(--gray-300); border-radius: 8px;
+    padding: 8px 12px; font-family: 'DM Sans', sans-serif; font-size: 13px;
+    resize: vertical; min-height: 70px; background: white;
+    color: var(--gray-700);
+  }
+  .obs-field textarea:focus { outline: none; border-color: var(--green); }
+  .obs-field label { font-size: 11px; font-weight: 700; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 6px; }
+
+  /* LIGHTBOX */
+  .lightbox-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.88);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.2s;
+  }
+  .lightbox-overlay.visible { opacity: 1; pointer-events: all; }
+  .lightbox-overlay img { max-width: 90vw; max-height: 88vh; border-radius: 10px; box-shadow: 0 8px 40px rgba(0,0,0,0.5); }
+  .lightbox-close { position: absolute; top: 18px; right: 22px; color: white; font-size: 28px; cursor: pointer; background: none; border: none; }
+
+  /* STATUS INDICATOR */
+  .item-row.s-cumple .item-main { background: #f0faf0; }
+  .item-row.s-nocumple .item-main { background: #fff6f6; }
+  .item-row.s-na .item-main { background: #f7f7f7; }
+
+  /* PROGRESS BAR */
+  .progress-section {
+    background: white;
+    border-radius: 14px;
+    box-shadow: var(--shadow);
+    padding: 24px;
+    margin-bottom: 20px;
+    position: sticky;
+    top: 72px;
+    z-index: 50;
+  }
+  .progress-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .progress-label { font-size: 13px; font-weight: 600; color: var(--gray-700); }
+  .progress-pct { font-size: 28px; font-weight: 700; color: var(--green); font-family: 'DM Mono', monospace; }
+  .progress-bar-bg { background: var(--gray-100); border-radius: 99px; height: 10px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--green-light)); border-radius: 99px; transition: width 0.4s ease; }
+  .progress-stats { display: flex; gap: 16px; margin-top: 12px; }
+  .stat-pill { display: flex; align-items: center; gap: 6px; font-size: 12px; font-weight: 500; }
+  .stat-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-green { background: var(--green); }
+  .dot-red { background: var(--red); }
+  .dot-gray { background: var(--gray-300); }
+
+  /* CTA BUTTON */
+  .cta-area { padding: 8px 0; text-align: center; }
+  .btn-report {
+    background: var(--green);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 40px;
+    font-family: 'DM Sans', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s;
+    letter-spacing: -0.3px;
+    box-shadow: 0 4px 16px rgba(45,106,45,0.35);
+  }
+  .btn-report:hover { background: var(--green-light); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,106,45,0.35); }
+  .btn-report:disabled { background: var(--gray-300); box-shadow: none; transform: none; cursor: not-allowed; }
+
+  /* MODAL */
+  .modal-overlay {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.55);
+    display: flex; align-items: flex-start; justify-content: center;
+    z-index: 999; padding: 20px;
+    overflow-y: auto;
+    opacity: 0; pointer-events: none; transition: opacity 0.3s;
+  }
+  .modal-overlay.visible { opacity: 1; pointer-events: all; }
+  .modal {
+    background: white; border-radius: 16px;
+    max-width: 720px; width: 100%;
+    padding: 36px;
+    transform: translateY(20px); transition: transform 0.3s;
+    margin: auto;
+  }
+  .modal-overlay.visible .modal { transform: translateY(0); }
+  .modal-header { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 28px; }
+  .modal-header h2 { font-size: 20px; font-weight: 700; color: var(--gray-900); }
+  .modal-header p { font-size: 13px; color: var(--gray-500); margin-top: 4px; }
+  .btn-close { background: var(--gray-100); border: none; border-radius: 8px; width: 36px; height: 36px; cursor: pointer; font-size: 18px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .report-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; background: var(--gray-100); border-radius: 10px; padding: 14px 18px; margin-bottom: 20px; }
+  .report-meta-item { font-size: 13px; }
+  .report-meta-item strong { display: block; font-size: 11px; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.4px; margin-bottom: 2px; }
+  .score-banner { background: var(--green); color: white; border-radius: 12px; padding: 20px 24px; display: flex; align-items: center; gap: 24px; margin-bottom: 24px; }
+  .score-big { font-size: 52px; font-weight: 800; font-family: 'DM Mono', monospace; line-height: 1; }
+  .score-right { flex: 1; }
+  .score-label { font-size: 13px; opacity: 0.8; margin-bottom: 4px; }
+  .score-detail { font-size: 14px; font-weight: 600; }
+  .score-banner.warn { background: var(--yellow); color: var(--gray-900); }
+  .score-banner.danger { background: var(--red); }
+  .report-section { margin-bottom: 20px; }
+  .report-section h3 { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--green); margin-bottom: 10px; border-bottom: 2px solid var(--green-pale); padding-bottom: 6px; }
+  .report-item { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 1px solid #f5f5f5; font-size: 13px; }
+  .report-item:last-child { border-bottom: none; }
+  .ritem-num { font-family: 'DM Mono', monospace; color: var(--gray-500); font-size: 12px; width: 36px; flex-shrink: 0; padding-top: 1px; }
+  .ritem-text { flex: 1; color: var(--gray-700); line-height: 1.4; }
+  .ritem-obs { font-size: 11px; color: var(--gray-500); margin-top: 2px; font-style: italic; }
+  .badge { display: inline-block; border-radius: 4px; padding: 2px 8px; font-size: 11px; font-weight: 700; white-space: nowrap; }
+  .badge-cumple { background: var(--green-pale); color: var(--green); }
+  .badge-nocumple { background: var(--red-pale); color: var(--red); }
+  .badge-na { background: var(--gray-100); color: var(--gray-500); }
+  .badge-pend { background: #fff8e1; color: #b8860b; }
+  .report-actions { display: flex; gap: 12px; margin-top: 24px; }
+  .btn-print { flex: 1; background: var(--gray-100); border: none; border-radius: 10px; padding: 13px; font-family: 'DM Sans', sans-serif; font-size: 14px; font-weight: 600; cursor: pointer; transition: background 0.2s; color: var(--gray-700); }
+  .btn-print:hover { background: var(--gray-300); }
+
+  /* RESPONSIVE */
+  @media (max-width: 600px) {
+    .meta-grid { grid-template-columns: 1fr; }
+    .status-buttons { flex-wrap: wrap; }
+    .status-btn { font-size: 10px; padding: 4px 8px; }
+    .item-main { flex-wrap: wrap; gap: 8px; }
+    .evidence-panel { padding-left: 20px; }
+    .report-meta { grid-template-columns: 1fr; }
+    .score-big { font-size: 40px; }
+  }
+
+  @media print {
+    .app-header, .progress-section, .cta-area, .photo-upload, .obs-field textarea { display: none !important; }
+    body { background: white; }
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <div class="logo-block">
+    <div class="logo-icon">
+      <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M20 4 L36 14 L36 26 L20 36 L4 26 L4 14 Z" fill="#2d6a2d"/>
+        <path d="M14 20 L18 24 L26 16" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <div>
+      <div class="logo-text">DUWEST</div>
+      <div class="logo-sub">INSPECCIÓN · RE-EMPAQUE</div>
+    </div>
+  </div>
+  <div class="progress-pill">
+    <div class="progress-dot"></div>
+    <span id="header-pct">0% completado</span>
+  </div>
+</header>
+
+<div class="container">
+
+  <!-- META CARD -->
+  <div class="card meta-card">
+    <h2>📋 Datos de la Inspección</h2>
+    <div class="meta-grid">
+      <div class="field">
+        <label>Inspector Responsable</label>
+        <input type="text" id="meta-inspector" placeholder="Nombre completo" />
+      </div>
+      <div class="field">
+        <label>Fecha de Ejecución</label>
+        <input type="date" id="meta-fecha" />
+      </div>
+      <div class="field">
+        <label>Sucursal / Bodega</label>
+        <input type="text" id="meta-sucursal" placeholder="Ej. Bodegas DUWEST – CR" />
+      </div>
+      <div class="field">
+        <label>Turno</label>
+        <select id="meta-turno">
+          <option value="">Seleccionar...</option>
+          <option>Mañana</option>
+          <option>Tarde</option>
+          <option>Noche</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROGRESS STICKY -->
+  <div class="progress-section">
+    <div class="progress-top">
+      <span class="progress-label">Porcentaje de Ejecución</span>
+      <span class="progress-pct" id="pct-text">0%</span>
+    </div>
+    <div class="progress-bar-bg">
+      <div class="progress-bar-fill" id="pbar" style="width:0%"></div>
+    </div>
+    <div class="progress-stats">
+      <div class="stat-pill"><div class="stat-dot dot-green"></div><span id="cnt-cumple">0 Cumple</span></div>
+      <div class="stat-pill"><div class="stat-dot dot-red"></div><span id="cnt-nocumple">0 No Cumple</span></div>
+      <div class="stat-pill"><div class="stat-dot dot-gray"></div><span id="cnt-na">0 N/A</span></div>
+    </div>
+  </div>
+
+  <!-- SECTIONS will be rendered by JS -->
+  <div id="sections-container"></div>
+
+  <div class="cta-area">
+    <button class="btn-report" id="btn-report" onclick="openReport()">📄 Generar Informe de Cumplimiento</button>
+  </div>
+</div>
+
+<!-- REPORT MODAL -->
+<div class="modal-overlay" id="report-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <div>
+        <h2>Informe de Cumplimiento</h2>
+        <p>Área de Re-Empaque y Re-Envase de Agroquímicos</p>
+      </div>
+      <button class="btn-close" onclick="closeReport()">✕</button>
+    </div>
+    <div id="report-content"></div>
+    <div class="report-actions">
+      <button class="btn-print" onclick="window.print()">🖨️ Imprimir / Guardar PDF</button>
+      <button class="btn-print" onclick="closeReport()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox-overlay" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="closeLightbox()">✕</button>
+  <img id="lb-img" src="" alt="Evidencia" onclick="event.stopPropagation()">
+</div>
+
+<script>
+const SECTIONS = [
+  { num: 1, title: "Aspectos Legales y Permisos", items: [
+    { id: "1.1", text: "El establecimiento cuenta con Permiso Sanitario de Funcionamiento vigente (actividad: almacenamiento y re-empaque de agroquímicos)." },
+    { id: "1.2", text: "La actividad de re-empaque está declarada ante el Ministerio de Salud." },
+    { id: "1.3", text: "Existe Declaración Jurada de Manejo de Sustancias Químicas Peligrosas vigente." },
+    { id: "1.4", text: "El re-envase se realiza únicamente a envases permitidos por el fabricante y la normativa." },
+    { id: "1.5", text: "Cumple con el Reglamento de Registro, Uso y Control de Plaguicidas (MAG)." },
+  ]},
+  { num: 2, title: "Infraestructura del Área", items: [
+    { id: "2.1", text: "Área física independiente y delimitada de otras operaciones." },
+    { id: "2.2", text: "Pisos impermeables, continuos, antideslizantes y resistentes a químicos." },
+    { id: "2.3", text: "Pendiente y drenaje controlado para manejo de derrames." },
+    { id: "2.4", text: "Paredes y superficies lavables y no absorbentes." },
+    { id: "2.5", text: "Techo que impide ingreso de lluvia, polvo o fauna." },
+    { id: "2.6", text: "Iluminación suficiente (natural o artificial) sin generar sombras críticas." },
+    { id: "2.7", text: "Ventilación mecánica en buen estado en cuanto a inyección y extracción." },
+    { id: "2.8", text: "Acceso restringido y señalizado (solo personal autorizado)." },
+  ]},
+  { num: 3, title: "Equipos y Herramientas", items: [
+    { id: "3.1", text: "Mesas y superficies de trabajo resistentes a sustancias químicas." },
+    { id: "3.2", text: "Bombas, embudos y sistemas de trasiego en buen estado." },
+    { id: "3.3", text: "Equipos exclusivos para agroquímicos (no uso cruzado)." },
+    { id: "3.4", text: "Balanzas calibradas y en buen estado (si aplica)." },
+    { id: "3.5", text: "Herramientas limpias y sin residuos visibles." },
+    { id: "3.6", text: "Existencia de sistema de drenaje limpio y sin suciedad." },
+  ]},
+  { num: 4, title: "Envases y Material de Empaque", items: [
+    { id: "4.1", text: "Envases compatibles químicamente con el producto." },
+    { id: "4.2", text: "Envases limpios, secos y en buen estado." },
+    { id: "4.3", text: "Envases nuevos o reutilizados solo si la normativa lo permite." },
+    { id: "4.4", text: "Tapas herméticas y sistemas de cierre seguros." },
+    { id: "4.5", text: "Prohibido el uso de envases de alimentos o bebidas." },
+  ]},
+  { num: 5, title: "Etiquetado y SGA", items: [
+    { id: "5.1", text: "Todo producto reenvasado cuenta con etiqueta completa y legible." },
+    { id: "5.2", text: "Etiquetado conforme al Sistema Globalmente Armonizado (SGA)." },
+    { id: "5.3", text: "Nombre comercial presente en la etiqueta." },
+    { id: "5.4", text: "Ingrediente activo indicado." },
+    { id: "5.5", text: "Pictogramas de peligro incluidos." },
+    { id: "5.6", text: "Palabra de advertencia visible." },
+    { id: "5.7", text: "Indicaciones de riesgo detalladas." },
+    { id: "5.8", text: "Medidas de seguridad especificadas." },
+    { id: "5.9", text: "Etiquetas resistentes a humedad y manipulación." },
+  ]},
+  { num: 6, title: "Seguridad Ocupacional (MTSS)", items: [
+    { id: "6.1", text: "Personal capacitado en manejo seguro de agroquímicos." },
+    { id: "6.2", text: "Guantes resistentes a químicos disponibles." },
+    { id: "6.3", text: "Gafas de seguridad disponibles." },
+    { id: "6.4", text: "Mascarilla o respirador (según producto) disponible." },
+    { id: "6.5", text: "Delantal o overol disponible." },
+    { id: "6.6", text: "Duchas de emergencia o acceso inmediato a agua." },
+    { id: "6.7", text: "Lavaojos disponible y operativo." },
+    { id: "6.8", text: "Señalización de uso obligatorio de EPP." },
+    { id: "6.9", text: "Prohibido comer, beber o fumar en el área." },
+  ]},
+  { num: 7, title: "Manejo de Derrames y Emergencias", items: [
+    { id: "7.1", text: "Kit de derrames disponible (absorbentes, pala, contenedor)." },
+    { id: "7.2", text: "Procedimiento escrito para atención de derrames." },
+    { id: "7.3", text: "Personal capacitado en respuesta a emergencias químicas." },
+    { id: "7.4", text: "Extintores adecuados y vigentes tipo ABC." },
+    { id: "7.5", text: "Rutas de evacuación señalizadas." },
+    { id: "7.6", text: "Contactos de emergencia visibles." },
+  ]},
+  { num: 8, title: "Gestión de Residuos", items: [
+    { id: "8.1", text: "Residuos líquidos y sólidos segregados correctamente." },
+    { id: "8.2", text: "Envases vacíos sometidos a triple lavado cuando aplique." },
+    { id: "8.3", text: "Residuos peligrosos almacenados temporalmente en área señalizada." },
+    { id: "8.4", text: "Entrega a gestor autorizado con respaldo documental." },
+    { id: "8.5", text: "Registro de generación y disposición de residuos." },
+  ]},
+  { num: 9, title: "Documentación y Registros", items: [
+    { id: "9.1", text: "Procedimiento escrito de re-empaque y re-envase." },
+    { id: "9.2", text: "Hojas de Datos de Seguridad (HDS) disponibles." },
+    { id: "9.3", text: "Registros de capacitación del personal." },
+    { id: "9.4", text: "Bitácoras de re-empaque (fecha, producto, lote, responsable)." },
+    { id: "9.5", text: "Inspecciones internas documentadas." },
+  ]},
+  { num: 10, title: "Señalización y Orden", items: [
+    { id: "10.1", text: "Señalización de riesgo químico visible." },
+    { id: "10.2", text: 'Área rotulada como "Re-Empaque y Re-Envase de Agroquímicos".' },
+    { id: "10.3", text: "Orden y limpieza permanentes." },
+    { id: "10.4", text: "Pasillos despejados." },
+    { id: "10.5", text: "Productos identificados y organizados por compatibilidad." },
+  ]},
+];
+
+// State
+const state = {};
+SECTIONS.forEach(s => s.items.forEach(item => {
+  state[item.id] = { status: null, obs: '', photos: [] };
+}));
+
+// Render
+function render() {
+  const container = document.getElementById('sections-container');
+  container.innerHTML = '';
+  SECTIONS.forEach(section => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    const hdr = document.createElement('div');
+    hdr.className = 'section-header';
+    const secTotal = section.items.length;
+    const secDone = section.items.filter(i => state[i.id].status !== null).length;
+    hdr.innerHTML = `
+      <div class="section-num">${section.num}</div>
+      <div class="section-title">${section.title}</div>
+      <div class="section-badge">${secDone}/${secTotal}</div>
+    `;
+    card.appendChild(hdr);
+    section.items.forEach(item => {
+      const s = state[item.id].status;
+      const photoCount = state[item.id].photos.length;
+      const safeId = item.id.replace('.','_');
+      const row = document.createElement('div');
+      row.className = `item-row${s ? ' s-' + s.replace(' ','') : ''}`;
+
+      // Build gallery thumbs HTML
+      let thumbsHtml = state[item.id].photos.map((src, idx) => `
+        <div class="photo-thumb-wrap">
+          <img src="${src}" onclick="openLightbox('${item.id}', ${idx})" title="Ver foto">
+          <button class="del-btn" onclick="deletePhoto('${item.id}',${idx})" title="Eliminar">✕</button>
+        </div>
+      `).join('');
+
+      row.innerHTML = `
+        <div class="item-main" onclick="toggleEvidence('ev-${safeId}')">
+          <span class="item-num">${item.id}</span>
+          <span class="item-label">${item.text}</span>
+          <div class="status-buttons" onclick="event.stopPropagation()">
+            <button class="status-btn ${s==='cumple'?'active-cumple':''}" onclick="setStatus('${item.id}','cumple')">✓ Cumple</button>
+            <button class="status-btn ${s==='nocumple'?'active-nocumple':''}" onclick="setStatus('${item.id}','nocumple')">✗ No Cumple</button>
+            <button class="status-btn ${s==='na'?'active-na':''}" onclick="setStatus('${item.id}','na')">N/A</button>
+          </div>
+        </div>
+        <div class="evidence-panel ${state[item.id]._open ? 'visible' : ''}" id="ev-${safeId}">
+          <div class="evidence-inner">
+            <div>
+              <div class="photo-section-label">
+                📷 Fotos de Evidencia
+                ${photoCount > 0 ? `<span class="photo-count-badge">${photoCount} foto${photoCount>1?'s':''}</span>` : ''}
+              </div>
+              <div class="photo-gallery" id="gallery-${safeId}">
+                ${thumbsHtml}
+                <label class="photo-add-btn" title="Agregar foto">
+                  <input type="file" accept="image/*" multiple onchange="handlePhotos(event,'${item.id}')">
+                  <span class="add-icon">＋</span>
+                  <span class="add-label">Agregar foto</span>
+                </label>
+              </div>
+            </div>
+            <div class="obs-field">
+              <label>Observaciones</label>
+              <textarea placeholder="Describe hallazgos, condiciones observadas..." onchange="setObs('${item.id}',this.value)">${state[item.id].obs}</textarea>
+            </div>
+          </div>
+        </div>
+      `;
+      card.appendChild(row);
+    });
+    container.appendChild(card);
+  });
+  updateProgress();
+}
+
+function toggleEvidence(id) {
+  const panel = document.getElementById(id);
+  panel.classList.toggle('visible');
+}
+
+function setStatus(id, status) {
+  const prev = state[id].status;
+  state[id].status = prev === status ? null : status;
+  // Auto-open evidence panel on any status selection
+  if (state[id].status !== null) state[id]._open = true;
+  render();
+}
+
+function setObs(id, val) { state[id].obs = val; }
+
+function handlePhotos(event, id) {
+  const files = Array.from(event.target.files);
+  if (!files.length) return;
+  let loaded = 0;
+  files.forEach(file => {
+    const reader = new FileReader();
+    reader.onload = e => {
+      state[id].photos.push(e.target.result);
+      state[id]._open = true;
+      loaded++;
+      if (loaded === files.length) render();
+    };
+    reader.readAsDataURL(file);
+  });
+}
+
+function deletePhoto(id, idx) {
+  state[id].photos.splice(idx, 1);
+  state[id]._open = true;
+  render();
+}
+
+// Lightbox
+function openLightbox(id, idx) {
+  const src = state[id].photos[idx];
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lightbox').classList.add('visible');
+}
+function closeLightbox() {
+  document.getElementById('lightbox').classList.remove('visible');
+}
+
+function updateProgress() {
+  let total = 0, cumple = 0, nocumple = 0, na = 0;
+  SECTIONS.forEach(s => s.items.forEach(item => {
+    total++;
+    const st = state[item.id].status;
+    if (st === 'cumple') cumple++;
+    else if (st === 'nocumple') nocumple++;
+    else if (st === 'na') na++;
+  }));
+  const answered = cumple + nocumple + na;
+  const pct = Math.round((answered / total) * 100);
+  document.getElementById('pct-text').textContent = pct + '%';
+  document.getElementById('pbar').style.width = pct + '%';
+  document.getElementById('header-pct').textContent = pct + '% completado';
+  document.getElementById('cnt-cumple').textContent = cumple + ' Cumple';
+  document.getElementById('cnt-nocumple').textContent = nocumple + ' No Cumple';
+  document.getElementById('cnt-na').textContent = na + ' N/A';
+}
+
+function openReport() {
+  let total = 0, cumple = 0, nocumple = 0, na = 0;
+  SECTIONS.forEach(s => s.items.forEach(item => {
+    total++;
+    const st = state[item.id].status;
+    if (st === 'cumple') cumple++;
+    else if (st === 'nocumple') nocumple++;
+    else if (st === 'na') na++;
+  }));
+  const answered = cumple + nocumple + na;
+  // Exclude N/A from compliance calculation
+  const applicable = cumple + nocumple;
+  const compliance = applicable > 0 ? Math.round((cumple / applicable) * 100) : 0;
+  const completion = Math.round((answered / total) * 100);
+
+  let bannerClass = '';
+  if (compliance >= 80) bannerClass = '';
+  else if (compliance >= 60) bannerClass = 'warn';
+  else bannerClass = 'danger';
+
+  const inspector = document.getElementById('meta-inspector').value || '—';
+  const fecha = document.getElementById('meta-fecha').value || '—';
+  const sucursal = document.getElementById('meta-sucursal').value || 'Bodegas DUWEST – Costa Rica';
+  const turno = document.getElementById('meta-turno').value || '—';
+
+  let html = `
+    <div class="report-meta">
+      <div class="report-meta-item"><strong>Inspector</strong>${inspector}</div>
+      <div class="report-meta-item"><strong>Fecha</strong>${fecha}</div>
+      <div class="report-meta-item"><strong>Sucursal</strong>${sucursal}</div>
+      <div class="report-meta-item"><strong>Turno</strong>${turno}</div>
+    </div>
+    <div class="score-banner ${bannerClass}">
+      <div class="score-big">${compliance}%</div>
+      <div class="score-right">
+        <div class="score-label">Porcentaje de Cumplimiento</div>
+        <div class="score-detail">${cumple} cumple · ${nocumple} no cumple · ${na} N/A · ${total - answered} pendientes</div>
+        <div class="score-label" style="margin-top:8px">Ejecución del formulario: ${completion}%</div>
+      </div>
+    </div>
+  `;
+
+  // Sections breakdown
+  SECTIONS.forEach(section => {
+    const nocumpleItems = section.items.filter(i => state[i.id].status === 'nocumple');
+    const pendItems = section.items.filter(i => state[i.id].status === null);
+    const cumpleCount = section.items.filter(i => state[i.id].status === 'cumple').length;
+    const naCount = section.items.filter(i => state[i.id].status === 'na').length;
+    const applicable = section.items.length - naCount;
+    const pct = applicable > 0 ? Math.round((cumpleCount / applicable) * 100) : 100;
+
+    html += `<div class="report-section">
+      <h3>${section.num}. ${section.title} — ${pct}% cumplimiento</h3>`;
+
+    if (nocumpleItems.length === 0 && pendItems.length === 0) {
+      html += `<div style="font-size:13px;color:var(--green);padding:6px 0;">✅ Sección sin hallazgos</div>`;
+    }
+
+    nocumpleItems.forEach(item => {
+      const photoCount = state[item.id].photos.length;
+      html += `<div class="report-item">
+        <span class="ritem-num">${item.id}</span>
+        <div class="ritem-text">
+          ${item.text}
+          ${state[item.id].obs ? `<div class="ritem-obs">📝 ${state[item.id].obs}</div>` : ''}
+          ${photoCount > 0 ? `<div class="ritem-obs">📷 ${photoCount} foto${photoCount>1?'s':''} de evidencia adjunta${photoCount>1?'s':''}</div>` : ''}
+        </div>
+        <span class="badge badge-nocumple">No Cumple</span>
+      </div>`;
+    });
+    pendItems.forEach(item => {
+      html += `<div class="report-item">
+        <span class="ritem-num">${item.id}</span>
+        <div class="ritem-text">${item.text}</div>
+        <span class="badge badge-pend">Pendiente</span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  document.getElementById('report-content').innerHTML = html;
+  document.getElementById('report-modal').classList.add('visible');
+}
+
+function closeReport() {
+  document.getElementById('report-modal').classList.remove('visible');
+}
+
+// Set default date
+document.addEventListener('DOMContentLoaded', () => {
+  const today = new Date().toISOString().split('T')[0];
+  document.getElementById('meta-fecha').value = today;
+  render();
+});
+</script>
+</body>
+</html>
